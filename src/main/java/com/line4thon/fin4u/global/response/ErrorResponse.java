@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-@JsonPropertyOrder("isSuccess", "timeStamp", "code", "httpStatus", "message", "data")
+@JsonPropertyOrder({"isSuccess", "timeStamp", "code", "httpStatus", "message", "data"})
 public class ErrorResponse<T> extends BaseResponse {
 
     private final int httpStatus;
