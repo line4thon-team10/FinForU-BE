@@ -5,6 +5,7 @@ import com.line4thon.fin4u.global.response.SuccessResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +18,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/guide")
-@RequiredArgsConstructor
 public class AiGuideController {
 
     private final ChatClient chatClient;
+
+    public AiGuideController(
+            @Qualifier("mcpClient") ChatClient chatClient) {
+        this.chatClient = chatClient;
+    }
 
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getMain(
