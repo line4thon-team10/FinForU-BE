@@ -3,7 +3,6 @@ package com.line4thon.fin4u.domain.guide.controller;
 import com.line4thon.fin4u.domain.guide.dto.GetGuideMainPage;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import jakarta.validation.constraints.NotBlank;
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
