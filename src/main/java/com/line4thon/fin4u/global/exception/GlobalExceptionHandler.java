@@ -130,4 +130,14 @@ public class GlobalExceptionHandler {
         ErrorResponse<?> errorResponse = ErrorResponse.from(e.getBaseResponseCode());
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
     }
+
+    /**
+     * 핸들링되지 않은 예외
+     */
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<ErrorResponse<?>> handleException(Throwable e) {
+        log.error("Throwable : {}", e.getMessage(), e);
+        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.SERVER_ERROR);
+        return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
+    }
 }
