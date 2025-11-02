@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -48,6 +49,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * RequestParam validation failed
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse<?>> handleHandlerMethodValidationException(HandlerMethodValidationException e) {
+        log.error("HandlerMethodValidationException : {}", e.getMessage(), e);
+        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_BODY);
+        return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
+    }
+
+    /**
      * RequestBody 객체의 JSON 파싱 실패 (JSON 문법 오류, 타입 불일치, 필수 바디 누락 등)
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -55,7 +66,7 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException e
     ) {
         log.error("HttpMessageNotReadableException : {}", e.getMessage(), e);
-        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_BODY);
+        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_PARAMETER);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
     }
 
