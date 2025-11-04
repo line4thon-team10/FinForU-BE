@@ -15,7 +15,7 @@ permissions:
 
 env:
   JAVA_VERSION: '21'
-  IMAGE: ${{ secrets.DOCKER_USERNAME }}/Fin4u
+  IMAGE: ${{ secrets.DOCKER_USERNAME }}/fin4u
 
 jobs:
   build:
