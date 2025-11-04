@@ -134,5 +134,5 @@ public class GlobalExceptionHandler {
         log.error("Exception : {}", e.getMessage(), e);
         ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.SERVER_ERROR);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
-    } develop
+    }
 }
