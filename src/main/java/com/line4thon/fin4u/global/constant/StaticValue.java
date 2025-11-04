@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.global.constant;
 
+
 // 공통 응답
 public class StaticValue {
     // 2XX case

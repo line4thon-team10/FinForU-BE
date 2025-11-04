@@ -20,7 +20,6 @@ public class SuccessResponse<T> extends BaseResponse {
         this.httpStatus = baseResponseCode.getHttpStatus();
         this.data = data;
     }
-
     /* factory method */
 
     // 200 OK
@@ -47,6 +46,7 @@ public class SuccessResponse<T> extends BaseResponse {
      * @param baseResponseCode
      * @param <T>
      */
+
     public static <T> SuccessResponse<T> of(T data, BaseResponseCode baseResponseCode) {
         return new SuccessResponse<>(data, baseResponseCode);
     }
@@ -56,6 +56,7 @@ public class SuccessResponse<T> extends BaseResponse {
      * @param baseResponseCode
      * @return
      */
+
     public static SuccessResponse<?> from(BaseResponseCode baseResponseCode) {
         return new SuccessResponse<>(null, baseResponseCode);
     }

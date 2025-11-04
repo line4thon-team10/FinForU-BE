@@ -13,7 +13,6 @@ public class ErrorResponse<T> extends BaseResponse {
 
     private final int httpStatus;
     private final T data;
-
     /**
      * @param data 제네릭으로 받는 변수 data, 응답에 포함된다.
      * @param baseResponseCode baseResponseCode 객체를 사용해 message, httpStatus를 완성한다.
@@ -24,6 +23,7 @@ public class ErrorResponse<T> extends BaseResponse {
         this.httpStatus = baseResponseCode.getHttpStatus();
         this.data = data;
     }
+
 
     /**
      * @param data 제네릭으로 받는 변수 data, 응답에 포함된다.
@@ -62,6 +62,7 @@ public class ErrorResponse<T> extends BaseResponse {
      * @param data 제네릭 변수 data이다.
      * @param <T>
      */
+
     public static <T> ErrorResponse<T> of(BaseResponseCode baseResponseCode, T data) {
         return new ErrorResponse<>(data, baseResponseCode);
     }
@@ -76,4 +77,5 @@ public class ErrorResponse<T> extends BaseResponse {
     public static <T> ErrorResponse<T> of(BaseResponseCode baseResponseCode, T data, String message) {
         return new ErrorResponse<>(data, baseResponseCode, message);
     }
+
 }

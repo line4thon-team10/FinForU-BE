@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
     /**
      * RequestBody DTO의 검증 조건을 위배한 경우
      * @param e
+
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse<?>> handleMethodArgumentNotValidException(
@@ -133,5 +134,5 @@ public class GlobalExceptionHandler {
         log.error("Exception : {}", e.getMessage(), e);
         ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.SERVER_ERROR);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
-    }
+    } develop
 }

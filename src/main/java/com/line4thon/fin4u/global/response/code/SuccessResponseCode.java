@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import static com.line4thon.fin4u.global.constant.StaticValue.CREATED;
 import static com.line4thon.fin4u.global.constant.StaticValue.OK;
-
 @Getter
 @AllArgsConstructor
 public enum SuccessResponseCode implements BaseResponseCode {
