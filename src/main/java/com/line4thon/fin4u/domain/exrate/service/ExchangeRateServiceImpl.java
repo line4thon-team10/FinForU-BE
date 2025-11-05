@@ -34,8 +34,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return List.of(usdExchangeRate, cnyExchangeRate, vndExchangeRate);
     }
 
-    @Override
-    public Object getToastMessage() {
+    private Object getToastMessage() {
         return null;
     }
 }
