@@ -41,7 +41,7 @@ public class KoreanBankApiProvider {
                 .bodyToMono(ExchangeData.class)
                 .block();
 
-        log.info("KoreanBank How many records : {}", response.StatisticSearch().row().size());
+        //log.info("KoreanBank How many records : {}", response.StatisticSearch().row().size());
 
         Map<String, Double> exchangeRates = response.StatisticSearch().row().stream()
                 .collect(Collectors.toMap(
