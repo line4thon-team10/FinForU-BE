@@ -53,6 +53,7 @@ public class KoreanBankApiProvider {
                         data -> Double.parseDouble(data.DATA_VALUE())
                 ));
 
+        // 오늘 환율과 직전 영업일 환율을 가져와서 비교
         Double todayRate = exchangeRates.get(now);
         Double forCompareRate = exchangeRates.get(yesterday);
         Double changeRate = null;
@@ -66,6 +67,7 @@ public class KoreanBankApiProvider {
 
         changeRate = ((todayRate - forCompareRate) / forCompareRate) * 100.0;
 
+        // 1년간의 날짜와 환율을 필드로하는 객체 레퍼런스 배열 초기화
         List<ExchangeRateRes.Exchange> exchangeList = response.StatisticSearch().row().stream()
                 .map(data -> new ExchangeRateRes.Exchange(
                         LocalDate.parse(data.TIME(), DateTimeFormatter.BASIC_ISO_DATE),
@@ -73,6 +75,19 @@ public class KoreanBankApiProvider {
                 ))
                 .toList();
 
+        // 통화 코드별 각 은행사 최대 우대 환전 수수료를 객체 레퍼런스 배열로 초기화
+        List<ExchangeRateRes.Fee> eachBankFee = initFees(currencyCode);
+
+        return new ExchangeRateRes(
+                Country.getCurrencyType(currencyCode),
+                todayRate,
+                changeRate,
+                exchangeList,
+                eachBankFee
+        );
+    }
+
+    private List<ExchangeRateRes.Fee> initFees(String currencyCode) {
         List<ExchangeRateRes.Fee> eachBankFee = new ArrayList<>();
         switch(Country.getCurrencyType(currencyCode)) {
             case "USD":
@@ -102,14 +117,7 @@ public class KoreanBankApiProvider {
             default:
                 throw new IllegalStateException("Unknown currency code " + currencyCode);
         }
-
-        return new ExchangeRateRes(
-                Country.getCurrencyType(currencyCode),
-                todayRate,
-                changeRate,
-                exchangeList,
-                eachBankFee
-        );
+        return eachBankFee;
     }
 
     private void init(String now, String currencyCode) {
