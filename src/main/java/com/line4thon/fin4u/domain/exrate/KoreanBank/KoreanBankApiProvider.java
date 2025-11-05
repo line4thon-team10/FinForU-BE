@@ -31,7 +31,6 @@ public class KoreanBankApiProvider {
     public ExchangeRateRes callExchangeRate(String currencyCode) {
         String now = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
         String yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
-        log.info("KoreanBank API Key : {}", apiKey);
 
         init(now, currencyCode);
 
@@ -40,8 +39,6 @@ public class KoreanBankApiProvider {
                 .retrieve()
                 .bodyToMono(ExchangeData.class)
                 .block();
-
-        //log.info("KoreanBank How many records : {}", response.StatisticSearch().row().size());
 
         Map<String, Double> exchangeRates = response.StatisticSearch().row().stream()
                 .collect(Collectors.toMap(
