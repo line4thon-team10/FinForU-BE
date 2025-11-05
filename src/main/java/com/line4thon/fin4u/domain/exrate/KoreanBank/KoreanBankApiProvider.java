@@ -1,6 +1,7 @@
 package com.line4thon.fin4u.domain.exrate.KoreanBank;
 
 import com.line4thon.fin4u.domain.exrate.entity.ExchangeFee;
+import com.line4thon.fin4u.domain.exrate.exception.KoreanBankApuResponseNullException;
 import com.line4thon.fin4u.domain.exrate.web.dto.ExchangeData;
 import com.line4thon.fin4u.domain.exrate.web.dto.ExchangeRateRes;
 import lombok.Getter;
@@ -44,6 +45,7 @@ public class KoreanBankApiProvider {
 
         // WebClient는 비동기 통신이어서, .block() 메소드로 블로킹함수로 변환했지만
         // 저번 테스트 통신 중 API 통신 에러가 떴었음.
+        if(response == null) { throw new KoreanBankApuResponseNullException(); }
 
         Map<String, Double> exchangeRates = response.StatisticSearch().row().stream()
                 .collect(Collectors.toMap(
