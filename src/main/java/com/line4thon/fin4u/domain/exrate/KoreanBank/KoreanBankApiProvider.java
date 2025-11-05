@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.exrate.KoreanBank;
 
+import com.line4thon.fin4u.domain.exrate.entity.ExchangeFee;
 import com.line4thon.fin4u.domain.exrate.web.dto.ExchangeData;
 import com.line4thon.fin4u.domain.exrate.web.dto.ExchangeRateRes;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +41,9 @@ public class KoreanBankApiProvider {
                 .retrieve()
                 .bodyToMono(ExchangeData.class)
                 .block();
+
+        // WebClient는 비동기 통신이어서, .block() 메소드로 블로킹함수로 변환했지만
+        // 저번 테스트 통신 중 API 통신 에러가 떴었음.
 
         Map<String, Double> exchangeRates = response.StatisticSearch().row().stream()
                 .collect(Collectors.toMap(
@@ -66,11 +71,42 @@ public class KoreanBankApiProvider {
                 ))
                 .toList();
 
+        List<ExchangeRateRes.Fee> eachBankFee = new ArrayList<>();
+        switch(Country.getCurrencyType(currencyCode)) {
+            case "USD":
+                for(ExchangeFee fee : ExchangeFee.values()) {
+                    eachBankFee.add(new ExchangeRateRes.Fee(
+                            fee.getBank(),
+                            fee.getUsdFee()
+                    ));
+                }
+                break;
+            case "CNY":
+                for(ExchangeFee fee : ExchangeFee.values()) {
+                    eachBankFee.add(new ExchangeRateRes.Fee(
+                            fee.getBank(),
+                            fee.getCnyFee()
+                    ));
+                }
+                break;
+            case "VND":
+                for(ExchangeFee fee : ExchangeFee.values()) {
+                    eachBankFee.add(new ExchangeRateRes.Fee(
+                            fee.getBank(),
+                            fee.getVndFee()
+                    ));
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unknown currency code " + currencyCode);
+        }
+
         return new ExchangeRateRes(
                 Country.getCurrencyType(currencyCode),
                 todayRate,
                 changeRate,
-                exchangeList
+                exchangeList,
+                eachBankFee
         );
     }
 
