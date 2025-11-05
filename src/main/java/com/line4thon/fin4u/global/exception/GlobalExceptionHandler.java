@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -47,15 +48,24 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * JSON 문법 오류, 타입 불일치, 필수 바디 누락 등의 경우로 JSON 파싱에 실패한 경우
-     * @param e
+     * RequestParam validation failed
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse<?>> handleHandlerMethodValidationException(HandlerMethodValidationException e) {
+        log.error("HandlerMethodValidationException : {}", e.getMessage(), e);
+        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_BODY);
+        return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
+    }
+
+    /**
+     * RequestBody 객체의 JSON 파싱 실패 (JSON 문법 오류, 타입 불일치, 필수 바디 누락 등)
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse<?>> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e
     ) {
         log.error("HttpMessageNotReadableException : {}", e.getMessage(), e);
-        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_BODY);
+        ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.INVALID_HTTP_MESSAGE_PARAMETER);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
     }
 
@@ -126,12 +136,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 발생할 경우를 상정하지 않은, 즉 알 수 없는 서버 예외를 여기서 핸들링
-     * @param e
+     * 핸들링되지 않은 예외
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse<?>> handleException(Exception e) {
-        log.error("Exception : {}", e.getMessage(), e);
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<ErrorResponse<?>> handleException(Throwable e) {
+        log.error("Throwable : {}", e.getMessage(), e);
         ErrorResponse<?> errorResponse = ErrorResponse.from(ErrorResponseCode.SERVER_ERROR);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
     }
