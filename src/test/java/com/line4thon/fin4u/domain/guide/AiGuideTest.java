@@ -1,14 +1,19 @@
 package com.line4thon.fin4u.domain.guide;
 
+import com.line4thon.fin4u.config.TestSecurityConfig;
 import com.line4thon.fin4u.domain.guide.controller.AiGuideController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,10 +23,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AiGuideController.class)
+@Import({TestSecurityConfig.class})
 public class AiGuideTest {
+
+    // JPA Entity 정보를 들고있는 매핑 컨텍스트
+    @MockBean(JpaMetamodelMappingContext.class) // ✅ JPA Auditing 초기화 막는 핵심
+    JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Autowired
     private MockMvc mock;
+
 
     @MockBean(name = "mcpClient", answer = Answers.RETURNS_DEEP_STUBS)
     private ChatClient client;
