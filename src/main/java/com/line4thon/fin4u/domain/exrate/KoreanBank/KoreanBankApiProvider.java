@@ -31,8 +31,8 @@ public class KoreanBankApiProvider {
     private String apiKey;
     private WebClient client;
 
-    public ExchangeRateRes callExchangeRate(String currencyCode) {
-        String now = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+    public ExchangeRateRes.ExchangeRateData callExchangeRate(String currencyCode) {
+        String now = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
         String yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
 
         init(now, currencyCode);
@@ -55,10 +55,13 @@ public class KoreanBankApiProvider {
 
         // 오늘 환율과 직전 영업일 환율을 가져와서 비교
         Double todayRate = exchangeRates.get(now);
+        int i = 0;
+        while(todayRate == null) {
+            todayRate = exchangeRates.get(LocalDateTime.now().minusDays(i++).format(DateTimeFormatter.BASIC_ISO_DATE););
+        }
         Double forCompareRate = exchangeRates.get(yesterday);
         Double changeRate = null;
         if(forCompareRate == null) {
-            int i = 2;
             while(forCompareRate == null) {
                 String date = LocalDateTime.now().minusDays(i++).format(DateTimeFormatter.BASIC_ISO_DATE);
                 forCompareRate = exchangeRates.get(date);
@@ -78,7 +81,7 @@ public class KoreanBankApiProvider {
         // 통화 코드별 각 은행사 최대 우대 환전 수수료를 객체 레퍼런스 배열로 초기화
         List<ExchangeRateRes.Fee> eachBankFee = initFees(currencyCode);
 
-        return new ExchangeRateRes(
+        return new ExchangeRateRes.ExchangeRateData(
                 Country.getCurrencyType(currencyCode),
                 todayRate,
                 changeRate,
