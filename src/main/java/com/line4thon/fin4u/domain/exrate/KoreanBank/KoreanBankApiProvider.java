@@ -57,7 +57,7 @@ public class KoreanBankApiProvider {
         Double todayRate = exchangeRates.get(now);
         int i = 0;
         while(todayRate == null) {
-            todayRate = exchangeRates.get(LocalDateTime.now().minusDays(i++).format(DateTimeFormatter.BASIC_ISO_DATE););
+            todayRate = exchangeRates.get(LocalDateTime.now().minusDays(i++).format(DateTimeFormatter.BASIC_ISO_DATE));
         }
         Double forCompareRate = exchangeRates.get(yesterday);
         Double changeRate = null;
