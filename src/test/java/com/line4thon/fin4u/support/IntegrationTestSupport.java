@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers // 테스트시 Docker를 이용하여 db과 같은 환경 구축을 돕는 라이브러리
-@SpringBootTest // JUnit이 컨테이너 라이프사이클 자동 관리 선언 (start/stop)
+@SpringBootTest
 public abstract class IntegrationTestSupport {
 
     //테스트 실행할 때만 db를 띄움
