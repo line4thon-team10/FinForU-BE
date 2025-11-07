@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fin4u
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/fin4u?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: true
+
+jwt:
+  secret: my-secret-key-12345678901234567890
+  expiration: 360000000
+  access-exp-minutes: 60
+  refresh-exp-days: 7
+
+security:
+  cookie:
+    access-name: ACCESS_TOKEN
+    refresh-name: REFRESH_TOKEN
+    same-site: Lax # (크로스도메인이면 None + Secure 필요)
+    secure: false   # HTTPS면 true
+    domain: localhost
+    path: /
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
