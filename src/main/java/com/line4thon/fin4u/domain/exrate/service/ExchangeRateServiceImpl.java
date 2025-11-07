@@ -51,7 +51,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return List.of(usdExchangeRate, cnyExchangeRate, vndExchangeRate);
     }
 
-    private String getToastMessage(List<ExchangeRateRes.Exchange> list) {
+    public String getToastMessage(List<ExchangeRateRes.Exchange> list) {
         return claude.call(
                 list.toString() + "You must tell me that Using " + "eng" + "| 이 정보들은 최근 1주일의 영업일 동안의" +
                         "단위 통화당 원화 가격입니다.(ex. 1dollar = 1400.0). " +
