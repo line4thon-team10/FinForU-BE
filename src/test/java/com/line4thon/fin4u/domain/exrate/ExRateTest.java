@@ -1,7 +1,6 @@
 package com.line4thon.fin4u.domain.exrate;
 
 import com.line4thon.fin4u.domain.exrate.KoreanBank.Country;
-import com.line4thon.fin4u.domain.exrate.service.ExchangeRateService;
 import com.line4thon.fin4u.domain.exrate.KoreanBank.KoreanBankApiProvider;
 import com.line4thon.fin4u.domain.exrate.service.ExchangeRateServiceImpl;
 import com.line4thon.fin4u.domain.exrate.web.dto.ExchangeRateRes;
