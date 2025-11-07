@@ -32,8 +32,8 @@ public class KoreanBankApiProvider {
     private String apiKey;
     private WebClient client;
 
-    @Cacheable(value = "exchangeRates", key = "#currencyCode")
     public ExchangeRateRes.ExchangeRateData callExchangeRate(String currencyCode) {
+        log.info("Cache miss");
         String now = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
         String yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
 
