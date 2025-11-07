@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AiGuideTest {
 
     // JPA Entity 정보를 들고있는 매핑 컨텍스트
-    @MockBean(JpaMetamodelMappingContext.class) // ✅ JPA Auditing 초기화 막는 핵심
+    @MockBean(JpaMetamodelMappingContext.class) // JPA Auditing 초기화 막는 핵심
     JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Autowired
