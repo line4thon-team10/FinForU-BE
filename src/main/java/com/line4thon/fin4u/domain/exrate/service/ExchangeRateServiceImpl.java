@@ -6,6 +6,7 @@ import com.line4thon.fin4u.domain.exrate.KoreanBank.KoreanBankApiProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final AnthropicChatModel claude;
 
     @Override
+    @Cacheable(value = "exchangeRates")
     public List<ExchangeRateRes> getExchangeRateGraphData() {
         ExchangeRateRes.ExchangeRateData usdExchangeRateData = provider
                 .callExchangeRate(Country.USD_CODE.getCurrencyCode()
