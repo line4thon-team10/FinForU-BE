@@ -26,8 +26,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({TestSecurityConfig.class})
 public class AiGuideTest {
 
+    // JPA 엔티티 메타데이터 로딩을 막아 MockBean으로 대체해 @WebMvcTest 시 JPA 초기화 오류 방지
+    @MockBean(JpaMetamodelMappingContext.class)
+    JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
     @Autowired
     private MockMvc mock;
+
 
     @MockBean(name = "mcpClient", answer = Answers.RETURNS_DEEP_STUBS)
     private ChatClient client;
