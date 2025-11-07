@@ -1,7 +1,10 @@
 package com.line4thon.fin4u.global.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -28,6 +31,16 @@ public class RedisCacheConfig {
                 .registerModule(new ParameterNamesModule())                 // record 생성자 및 속성 매핑 지원
                 .registerModule(new JavaTimeModule())                       // LocalDate 타입 직렬화
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);   // 날짜를 문자열로 직렬화
+
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfBaseType(Object.class)
+                .build();
+
+        objectMapper.activateDefaultTyping(
+                ptv,
+                ObjectMapper.DefaultTyping.EVERYTHING,
+                JsonTypeInfo.As.PROPERTY
+        );
 
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 // 캐시 유효기간 12시간으로 설정
