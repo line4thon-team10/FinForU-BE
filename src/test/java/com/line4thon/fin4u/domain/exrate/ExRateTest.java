@@ -64,5 +64,7 @@ public class ExRateTest {
                 .isNotEmpty();
 
         verify(koreanBankProvider).callExchangeRate(Country.USD_CODE.getCurrencyCode());
+        verify(koreanBankProvider).callExchangeRate(Country.CNY_CODE.getCurrencyCode());
+        verify(koreanBankProvider).callExchangeRate(Country.VND_CODE.getCurrencyCode());
     }
 }
