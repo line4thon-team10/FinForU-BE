@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ExchangeRateService {
     List<ExchangeRateRes> getExchangeRateGraphData();
+    String getToastMessage(List<ExchangeRateRes.Exchange> list);
 }
