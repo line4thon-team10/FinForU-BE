@@ -4,10 +4,6 @@ import org.mockito.Answers;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-<<<<<<< HEAD
-import org.springframework.test.context.ActiveProfiles;
-=======
->>>>>>> 1ee85a7 (Docs: develop에 merge할 때, 의존성 파일에 conflict 해결을 위한 develop 브랜치의 의존성 파일과 동기화)
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
