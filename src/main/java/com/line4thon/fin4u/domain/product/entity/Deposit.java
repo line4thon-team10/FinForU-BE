@@ -20,7 +20,7 @@ public class Deposit extends BaseEntity {
     private String name;
 
     // 특징 정보
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     // 기본금리

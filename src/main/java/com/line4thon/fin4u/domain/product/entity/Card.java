@@ -22,12 +22,15 @@ public class Card extends BaseEntity {
     private String name;
 
     // 특징 정보
-    @Column(name = "features")
-    private String features;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     // 연회비
-    @Column(name = "annual_fee")
-    private int annualFee;
+    @Column(name = "domestic_annual_fee")
+    private int domesticAnnualFee;
+
+    @Column(name = "international_annual_fee")
+    private int internationalAnnualFee;
 
     // 나이 자격
     @Column(name = "min_age")
@@ -45,11 +48,6 @@ public class Card extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type", nullable = false)
     private CardType cardType;
-
-    // 혜택
-    @Column(name = "card_benefits",columnDefinition = "JSON")
-    private String cardBenefits;
-
 
     // 공식 사이트 링크
     @Column(name = "website")

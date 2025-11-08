@@ -19,7 +19,7 @@ public class InstallmentSaving extends BaseEntity {
     private String name;
 
     // 특징 정보
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     // 기본금리
@@ -31,7 +31,7 @@ public class InstallmentSaving extends BaseEntity {
     private double maxInterestRate;
 
     // 가입 기간
-    @Column(name = "saving_term", nullable = false)
+    @Column(name = "saving_term")
     private Integer savingTerm;
 
     // 가입 기간 유연성
@@ -39,7 +39,7 @@ public class InstallmentSaving extends BaseEntity {
     private Boolean isFlexible;
 
     // 월 최대 납입금액
-    @Column(name = "max_monthly")
+    @Column(name = "max_monthly", nullable = false)
     private int maxMonthly;
 
     // 나이 자격
