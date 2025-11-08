@@ -26,7 +26,7 @@ public class DynamicPlaywrightFetcher implements IFetcher {
             page.selectOption("select", bank);
             page.locator("a").click();
 
-            page.waitForSelector("tbody callback wait", new Page.WaitForSelectorOptions()
+            page.waitForSelector("#Table_Result tbody tr", new Page.WaitForSelectorOptions()
                     .setState(WaitForSelectorState.VISIBLE)
                     .setTimeout(10000));
 
