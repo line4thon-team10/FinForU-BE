@@ -48,15 +48,9 @@ dependencies {
 	runtimeOnly  'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly  'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-<<<<<<< HEAD
     //통합 테스트
-    testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.testcontainers:mysql"
-=======
-	//통합 테스트
 	testImplementation "org.testcontainers:junit-jupiter"
 	testImplementation "org.testcontainers:mysql"
->>>>>>> 1ee85a7 (Docs: develop에 merge할 때, 의존성 파일에 conflict 해결을 위한 develop 브랜치의 의존성 파일과 동기화)
 }
 
 dependencyManagement {
