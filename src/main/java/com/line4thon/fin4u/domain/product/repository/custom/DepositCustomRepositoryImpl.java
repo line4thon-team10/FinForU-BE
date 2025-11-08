@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.line4thon.fin4u.domain.product.entity.QDeposit;
 import com.line4thon.fin4u.domain.product.entity.QBank;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -31,6 +32,31 @@ public class DepositCustomRepositoryImpl implements DepositCustomRepository {
         expression = expression.and(bankEq(filter.bank()));
         expression = expression.and(rateBetween(filter.minRate(), filter.maxRate()));
         expression = expression.and(termBetween(filter.termMonths()));
+
+        return queryFactory.selectFrom(deposit)
+                .join(deposit.bank, bank).fetchJoin()
+                .where(expression)
+                .fetch();
+    }
+
+    @Override
+    public List<Deposit> searchProducts(ProductFilterReq filter, List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        QDeposit deposit = QDeposit.deposit;
+        QBank bank = QBank.bank;
+
+        //동적 쿼리 시작
+        BooleanExpression expression = Expressions.asBoolean(true).isTrue();
+
+        //각 필터링
+        expression = expression.and(bankEq(filter.bank()));
+        expression = expression.and(rateBetween(filter.minRate(), filter.maxRate()));
+        expression = expression.and(termBetween(filter.termMonths()));
+
+        expression = expression.and(deposit.id.in(ids));
 
         return queryFactory.selectFrom(deposit)
                 .join(deposit.bank, bank).fetchJoin()

@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -28,6 +29,27 @@ public class CardCustomRepositoryImpl implements CardCustomRepository{
         BooleanExpression expression = Expressions.asBoolean(true).isTrue();
 
         expression = expression.and(bankEq(filter.bank()));
+
+        return queryFactory.selectFrom(card)
+                .join(card.bank, bank).fetchJoin()
+                .where(expression)
+                .fetch();
+    }
+
+    @Override
+    public List<Card> searchProducts(ProductFilterReq filter, List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        QCard card = QCard.card;
+        QBank bank = QBank.bank;
+
+        BooleanExpression expression = Expressions.asBoolean(true).isTrue();
+        expression = expression.and(bankEq(filter.bank()));
+
+        // 기존 조건 + 바구니 상품 ID 제한 조건 추가
+        expression = expression.and(card.id.in(ids));
 
         return queryFactory.selectFrom(card)
                 .join(card.bank, bank).fetchJoin()

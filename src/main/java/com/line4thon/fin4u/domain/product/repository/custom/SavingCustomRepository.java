@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SavingCustomRepository {
     List<InstallmentSaving> searchProducts(ProductFilterReq filter);
+    List<InstallmentSaving> searchProducts(ProductFilterReq filter, List<Long> ids);
 }

@@ -8,4 +8,5 @@ import java.util.List;
 //동적 쿼리 기능
 public interface DepositCustomRepository {
     List<Deposit> searchProducts(ProductFilterReq filter);
+    List<Deposit> searchProducts(ProductFilterReq filter, List<Long> ids);
 }

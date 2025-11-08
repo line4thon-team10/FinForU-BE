@@ -1,15 +1,20 @@
 package com.line4thon.fin4u.domain.product;
 
+
 import com.line4thon.fin4u.domain.product.entity.Bank;
 import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.CardType;
+import com.line4thon.fin4u.domain.product.entity.enums.Type;
+import com.line4thon.fin4u.domain.product.exception.InvalidProductTypeException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
 import com.line4thon.fin4u.domain.product.repository.BankRepository;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.DepositRepository;
 import com.line4thon.fin4u.domain.product.repository.InstallmentSavingRepository;
-import com.line4thon.fin4u.domain.product.service.ProductService;
+import com.line4thon.fin4u.domain.product.service.Product.ProductService;
+import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import com.line4thon.fin4u.support.IntegrationTestSupport;
@@ -20,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
 class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
@@ -57,18 +63,25 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                 Deposit.builder()
                         .name("High Rate 3Y")
                         .bank(sunnyBank)
+                        .description("예금 A 설명")
+                        .baseInterestRate(4.0)
                         .maxInterestRate(4.5)
-                        .depositTerm(36) // 필드명 통일 가정
+                        .depositTerm(36)
+                        .isFlexible(false)
                         .minDepositAmount(100000)
+                        .minAge(19)
+                        .idRequired(true)
+                        .isResident(true)
                         .build()
         );
 
         depositB = depositRepository.save(
                 Deposit.builder()
                         .name("Low Rate 1Y")
+                        .description("예금 b 설명")
                         .bank(greenTreeBank)
                         .maxInterestRate(3.0)
-                        .depositTerm(12) // 필드명 통일 가정
+                        .depositTerm(12)
                         .minDepositAmount(50000)
                         .build()
         );
@@ -78,17 +91,24 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                 InstallmentSaving.builder()
                         .name("Star 고금리 적금")
                         .bank(greenTreeBank)
+                        .description("적금 A 설명")
+                        .baseInterestRate(5.0)
                         .maxInterestRate(5.5)
-                        .savingTerm(12) // 필드명 통일 가정
+                        .savingTerm(12)
+                        .isFlexible(true)
                         .maxMonthly(500000)
+                        .minAge(15)
+                        .idRequired(false)
+                        .isResident(true)
                         .build()
         );
         savingB = savingRepository.save(
                 InstallmentSaving.builder()
                         .name("Sunny 일반 적금")
                         .bank(sunnyBank)
+                        .description("적금 B 설명")
                         .maxInterestRate(3.5)
-                        .savingTerm(36) // 필드명 통일 가정
+                        .savingTerm(36)
                         .maxMonthly(300000)
                         .build()
         );
@@ -99,7 +119,12 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .name("Star 무비 카드")
                         .bank(greenTreeBank)
                         .cardType(CardType.CREDIT)
-                        .annualFee(15000)
+                        .description("카드 A 설명")
+                        .domesticAnnualFee(15000)
+                        .internationalAnnualFee(20000)
+                        .minAge(20)
+                        .idRequired(true)
+                        .isResident(true)
                         .build()
         );
         cardB = cardRepository.save(
@@ -107,13 +132,14 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .name("Sunny 카페 체크카드")
                         .bank(sunnyBank)
                         .cardType(CardType.CHECK)
-                        .annualFee(0)
+                        .description("카드 B 설명")
+                        .domesticAnnualFee(0)
                         .build()
         );
     }
 
     // -----------------------------------------------------------
-    // 💡 1. 기본/통합 테스트
+    // 💡 1. 기본/통합 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("ProductType이 null일 때, 모든 상품 유형을 검색하는 로직이 작동한다.")
@@ -132,7 +158,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 2. 예금 (Deposit) 테스트
+    // 💡 2. 예금 (Deposit) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("예금: 금리 필터링 (4.0% 이상) - depositA 조회")
@@ -140,7 +166,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterDepositByHighRate() {
         // Given: 금리 필터 요청 (4.0% ~ 10.0%)
         ProductFilterReq request = new ProductFilterReq(
-                null, "deposit", 4.0, 10.0, 60
+                null, Type.DEPOSIT, 4.0, 10.0, 60
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -155,7 +181,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterDepositByShortTerm() {
         // Given: 기간 필터 요청 (최대 24개월 이하)
         ProductFilterReq request = new ProductFilterReq(
-                null, "deposit", 0.0, 10.0, 24
+                null, Type.DEPOSIT, 0.0, 10.0, 24
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -170,7 +196,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterDepositByBankAndRate() {
         // Given: Sunny Bank + 금리 4.0% 이상 요청
         ProductFilterReq request = new ProductFilterReq(
-                "Sunny Bank", "deposit", 4.0, 10.0, 60
+                "Sunny Bank", Type.DEPOSIT, 4.0, 10.0, 60
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -181,7 +207,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 3. 적금 (Saving) 테스트
+    // 💡 3. 적금 (Saving) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("적금: 금리 필터링 (5.0% 이상) - savingA 조회")
@@ -189,7 +215,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterSavingByHighRate() {
         // Given: 금리 필터 요청 (5.0% ~ 10.0%)
         ProductFilterReq request = new ProductFilterReq(
-                null, "saving", 5.0, 10.0, 60
+                null, Type.SAVING, 5.0, 10.0, 60
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -204,7 +230,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterSavingByPeriod() {
         // Given: 기간 필터 요청 (최대 12개월 이하)
         ProductFilterReq request = new ProductFilterReq(
-                null, "saving", 0.0, 10.0, 12
+                null, Type.SAVING, 0.0, 10.0, 12
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -219,7 +245,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterSavingByBankAndPeriod_NoMatch() {
         // Given: Sunny Bank (36개월) + 기간 12개월 이하 요청 (매칭되는 상품 없음)
         ProductFilterReq request = new ProductFilterReq(
-                "Sunny Bank", "saving", 0.0, 10.0, 12
+                "Sunny Bank", Type.SAVING, 0.0, 10.0, 12
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -229,7 +255,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 4. 카드 (Card) 테스트
+    // 💡 4. 카드 (Card) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("카드: 은행 필터링 (Sunny Bank) - cardB 조회")
@@ -237,7 +263,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     void testFilterCardByBank() {
         // Given: Sunny Bank 요청
         ProductFilterReq request = new ProductFilterReq(
-                "Sunny Bank", "card", null, null, null
+                "Sunny Bank", Type.CARD, null, null, null
         );
 
         ProductFilterRes result = productService.getFilterProduct(request);
@@ -245,26 +271,124 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         // Then: cardB (Sunny)만 조회되어야 함
         assertThat(result.cards()).hasSize(1);
         assertThat(result.cards().get(0).name()).isEqualTo(cardB.getName());
-        assertThat(result.cards().get(0).annualFee()).isEqualTo(0);
         assertThat(result.deposits()).isEmpty();
     }
 
-    @DisplayName("카드: 카드 특화 필터링 (연회비 0원) - cardB 조회")
+
+    // -----------------------------------------------------------
+    // 💡 5. Product 상세 조회 (getProductDetail) 테스트
+    // -----------------------------------------------------------
+
+    @DisplayName("상세 조회: 카드 상품 ID로 상세 정보를 성공적으로 조회한다.")
     @Test
-    void testFilterCardByAnnualFee() {
-        // Given: 연회비 0원 이하 요청 (최대 0원으로 가정)
-        ProductFilterReq request = new ProductFilterReq(
-                null, "card", null, null, null // 연회비 필드가 DTO에 없으므로, Repository에서 특화 필터 적용해야 함
-        );
+    void getProductDetail_Card_Success() {
+        // Given
+        Long cardId = cardA.getId();
 
-        // *주의: 이 테스트는 Repository에서 '연회비 <= 0' 필터링이 구현되어야 통과합니다.*
-        // ProductFilterReq DTO에 연회비 필드가 없으므로, 이 테스트는 Mocking 또는 DTO 수정을 전제로 합니다.
-        // 현재 DTO 기준으로는 연회비 필터링을 직접 테스트하기 어렵습니다.
+        // When
+        ProductDetailRes result = productService.getProductDetail("card", cardId);
 
-        // 임시로 모든 카드 조회 후 연회비 0원인 카드만 확인 (Service단 테스트 아님)
-        ProductFilterRes result = productService.getFilterProduct(request);
+        // Then
+        assertThat(result).isNotNull();
+        // 카드 상세 정보만 채워져 있어야 함
+        assertThat(result.cardDetail()).isNotNull();
+        assertThat(result.depositDetail()).isNull();
+        assertThat(result.savingDetail()).isNull();
 
-        // 연회비 필터 없이 전체 조회 후 Sunny Bank 카드(0원)가 포함되어 있는지 확인
-        assertThat(result.cards().stream().filter(c -> c.annualFee() == 0).count()).isEqualTo(1);
+        // 카드 정보 검증
+        assertThat(result.cardDetail().id()).isEqualTo(cardId);
+        assertThat(result.cardDetail().name()).isEqualTo("Star 무비 카드");
+        assertThat(result.cardDetail().bank()).isEqualTo(greenTreeBank.getBankName());
+        assertThat(result.cardDetail().internationalAnnualFee()).isEqualTo(20000);
+
+        // 자격 조건 검증 (Entity의 설정값 확인)
+        assertThat(result.cardDetail().eligibility().age()).isEqualTo(20);
+        assertThat(result.cardDetail().eligibility().validId()).isTrue();
+    }
+
+    @DisplayName("상세 조회: 예금 상품 ID로 상세 정보를 성공적으로 조회한다.")
+    @Test
+    void getProductDetail_Deposit_Success() {
+        // Given
+        Long depositId = depositA.getId();
+
+        // When
+        ProductDetailRes result = productService.getProductDetail("deposit", depositId);
+
+        // Then
+        assertThat(result).isNotNull();
+        // 예금 상세 정보만 채워져 있어야 함
+        assertThat(result.depositDetail()).isNotNull();
+        assertThat(result.cardDetail()).isNull();
+        assertThat(result.savingDetail()).isNull();
+
+        // 예금 정보 검증
+        assertThat(result.depositDetail().id()).isEqualTo(depositId);
+        assertThat(result.depositDetail().name()).isEqualTo("High Rate 3Y");
+        assertThat(result.depositDetail().maxRate()).isEqualTo(4.5);
+        assertThat(result.depositDetail().termMonths()).isEqualTo(36);
+
+        // 자격 조건 검증
+        assertThat(result.depositDetail().eligibility().age()).isEqualTo(19);
+    }
+
+    @DisplayName("상세 조회: 적금 상품 ID로 상세 정보를 성공적으로 조회한다.")
+    @Test
+    void getProductDetail_Saving_Success() {
+        // Given
+        Long savingId = savingA.getId();
+
+        // When
+        ProductDetailRes result = productService.getProductDetail("saving", savingId);
+
+        // Then
+        assertThat(result).isNotNull();
+        // 적금 상세 정보만 채워져 있어야 함
+        assertThat(result.savingDetail()).isNotNull();
+        assertThat(result.cardDetail()).isNull();
+        assertThat(result.depositDetail()).isNull();
+
+        // 적금 정보 검증
+        assertThat(result.savingDetail().id()).isEqualTo(savingId);
+        assertThat(result.savingDetail().name()).isEqualTo("Star 고금리 적금");
+        assertThat(result.savingDetail().maxRate()).isEqualTo(5.5);
+        assertThat(result.savingDetail().termMonths()).isEqualTo(12);
+        assertThat(result.savingDetail().isFlexible()).isTrue();
+
+        // 자격 조건 검증
+        assertThat(result.savingDetail().eligibility().age()).isEqualTo(15);
+        assertThat(result.savingDetail().eligibility().validId()).isFalse();
+    }
+
+    // -----------------------------------------------------------
+    // 💡 6. Product 상세 조회 예외 테스트
+    // -----------------------------------------------------------
+
+    @DisplayName("상세 조회 예외: 존재하지 않는 적금 상품 ID 요청 시 NotFoundSavingException이 발생한다.")
+    @Test
+    void getProductDetail_NotFoundSaving_ThrowsException() {
+        // Given
+        Long nonExistentId = 9999L;
+
+        // When & Then
+        assertThatThrownBy(() -> productService.getProductDetail("saving", nonExistentId))
+                .isInstanceOf(NotFoundSavingException.class)
+        // 에러 메시지 검증 (NotFoundSavingException에 메시지가 있다면 검증)
+        // .hasMessageContaining("해당 적금 상품을 찾을 수 없습니다.");
+        ;
+    }
+
+    @DisplayName("상세 조회 예외: 유효하지 않은 상품 타입(예: 'loan') 요청 시 InvalidProductTypeException이 발생한다.")
+    @Test
+    void getProductDetail_InvalidType_ThrowsException() {
+        // Given
+        String invalidType = "loan";
+        Long validId = cardA.getId();
+
+        // When & Then
+        assertThatThrownBy(() -> productService.getProductDetail(invalidType, validId))
+                .isInstanceOf(InvalidProductTypeException.class)
+        // .hasMessageContaining("유효하지 않은 상품 타입입니다.");
+        ;
     }
 }

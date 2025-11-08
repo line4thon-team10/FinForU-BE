@@ -8,4 +8,5 @@ import java.util.List;
 public interface CardCustomRepository {
 
     List<Card> searchProducts(ProductFilterReq filter);
+    List<Card> searchProducts(ProductFilterReq filter, List<Long> ids);
 }
