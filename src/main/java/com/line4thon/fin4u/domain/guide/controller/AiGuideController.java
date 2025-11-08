@@ -5,6 +5,7 @@ import com.line4thon.fin4u.global.response.SuccessResponse;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,21 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/guide")
 public class AiGuideController {
 
     private final ChatClient chatClient;
+    private final MessageSource messageSource;
 
     public AiGuideController(
-            @Qualifier("mcpClient") ChatClient chatClient) {
+            @Qualifier("mcpClient") ChatClient chatClient,
+            @Qualifier("messageSource") MessageSource messageSource
+    ) {
         this.chatClient = chatClient;
+        this.messageSource = messageSource;
     }
+
 
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getMain(
-            // FIXME 사용자 언어 설정에 따른 분기점 작성
+            Locale locale
     ) {
         GetGuideMainPage response;
         if(true) {
