@@ -70,12 +70,10 @@ public class AiGuideController {
 
     @GetMapping("/query")
     public ResponseEntity<SuccessResponse<?>> getAiGuide(
-            // FIXME JWT 추가 시, 토큰 검증 필요
-            @RequestParam @NotBlank String message
+            @RequestParam @NotBlank String message,
+            Locale locale
     ) {
-
-        // FIXME 사용자의 언어 정보를 추가적으로 전달해주어 언어에 맞게 자연어처리 된 문장을 반환하도록 설정
-        String response = chatClient.prompt(message).call().content();
+        String response = chatClient.prompt("Default Language: " + locale.getLanguage() + message).call().content();
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
