@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.guide;
 
+import com.line4thon.fin4u.config.TestSecurityConfig;
 import com.line4thon.fin4u.domain.guide.controller.AiGuideController;
 import com.line4thon.fin4u.global.config.MessageSourceConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -7,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,6 +33,7 @@ public class AiGuideTest {
 
     @Autowired
     private MockMvc mock;
+
 
     @MockBean(name = "mcpClient", answer = Answers.RETURNS_DEEP_STUBS)
     private ChatClient client;
