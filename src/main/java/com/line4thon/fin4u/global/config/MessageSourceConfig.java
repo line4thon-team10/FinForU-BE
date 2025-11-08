@@ -13,7 +13,7 @@ public class MessageSourceConfig {
 
         ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 
-        source.setBasenames("classpath:/messages/messages_en");
+        source.setBasenames("classpath:/messages/messages");
         source.setDefaultEncoding("UTF-8");
         source.setCacheSeconds(60);
 
