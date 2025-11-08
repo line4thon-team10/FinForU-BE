@@ -139,7 +139,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 1. 기본/통합 테스트 (기존 코드)
+    // 1. 기본/통합 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("ProductType이 null일 때, 모든 상품 유형을 검색하는 로직이 작동한다.")
@@ -158,7 +158,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 2. 예금 (Deposit) 테스트 (기존 코드)
+    // 2. 예금 (Deposit) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("예금: 금리 필터링 (4.0% 이상) - depositA 조회")
@@ -207,7 +207,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 3. 적금 (Saving) 테스트 (기존 코드)
+    // 3. 적금 (Saving) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("적금: 금리 필터링 (5.0% 이상) - savingA 조회")
@@ -255,7 +255,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 4. 카드 (Card) 테스트 (기존 코드)
+    // 4. 카드 (Card) 테스트 (기존 코드)
     // -----------------------------------------------------------
 
     @DisplayName("카드: 은행 필터링 (Sunny Bank) - cardB 조회")
@@ -276,7 +276,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
 
 
     // -----------------------------------------------------------
-    // 💡 5. Product 상세 조회 (getProductDetail) 테스트
+    // 5. Product 상세 조회 (getProductDetail) 테스트
     // -----------------------------------------------------------
 
     @DisplayName("상세 조회: 카드 상품 ID로 상세 정보를 성공적으로 조회한다.")
@@ -361,7 +361,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     }
 
     // -----------------------------------------------------------
-    // 💡 6. Product 상세 조회 예외 테스트
+    // 6. Product 상세 조회 예외 테스트
     // -----------------------------------------------------------
 
     @DisplayName("상세 조회 예외: 존재하지 않는 적금 상품 ID 요청 시 NotFoundSavingException이 발생한다.")
@@ -378,7 +378,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         ;
     }
 
-    @DisplayName("상세 조회 예외: 유효하지 않은 상품 타입(예: 'loan') 요청 시 InvalidProductTypeException이 발생한다.")
+    @DisplayName("상세 조회 예외: 유효하지 않은 상품 타입 요청 시 InvalidProductTypeException이 발생한다.")
     @Test
     void getProductDetail_InvalidType_ThrowsException() {
         // Given
