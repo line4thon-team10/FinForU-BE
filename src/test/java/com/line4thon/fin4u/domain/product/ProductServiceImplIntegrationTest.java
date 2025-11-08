@@ -5,7 +5,6 @@ import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.CardType;
-import com.line4thon.fin4u.domain.product.entity.enums.PaymentMethod;
 import com.line4thon.fin4u.domain.product.repository.BankRepository;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.DepositRepository;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -82,7 +80,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .bank(greenTreeBank)
                         .maxInterestRate(5.5)
                         .savingTerm(12) // 필드명 통일 가정
-                        .paymentMethod(PaymentMethod.MONTHLY)
                         .maxMonthly(500000)
                         .build()
         );
@@ -92,7 +89,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .bank(sunnyBank)
                         .maxInterestRate(3.5)
                         .savingTerm(36) // 필드명 통일 가정
-                        .paymentMethod(PaymentMethod.FREE)
                         .maxMonthly(300000)
                         .build()
         );

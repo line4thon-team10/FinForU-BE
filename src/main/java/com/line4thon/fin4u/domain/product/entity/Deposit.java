@@ -1,6 +1,5 @@
 package com.line4thon.fin4u.domain.product.entity;
 
-import com.line4thon.fin4u.domain.product.entity.enums.InterestPayment;
 import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +19,10 @@ public class Deposit extends BaseEntity {
     @Column(name = "deposit_name", nullable = false)
     private String name;
 
+    // 특징 정보
+    @Column(name = "description")
+    private String description;
+
     // 기본금리
     @Column(name = "base_interest_rate", nullable = false)
     private double baseInterestRate;
@@ -28,26 +31,29 @@ public class Deposit extends BaseEntity {
     @Column(name = "max_interest_rate")
     private double maxInterestRate;
 
-    // 최소 가입 금액 (목돈 거치 시 필요한 최소 금액)
+    // 예치 기간
+    @Column(name = "deposit_term")
+    private Integer depositTerm;
+
+    // 예치 기간 유연성
+    @Column(name = "flexible", columnDefinition = "TINYINT(1) DEFAULT 0")
+    private Boolean isFlexible;
+
+    // 최소 예치 금액
     @Column(name = "min_deposit_amount", nullable = false)
     private Integer minDepositAmount;
 
-    // 예치 기간
-    @Column(name = "deposit_term", nullable = false)
-    private Integer depositTerm;
+    // 나이 자격
+    @Column(name = "min_age")
+    private Integer minAge;
 
-    // 이자 지급 방식 (만기 일시 지급, 월 복리)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "interest_payment")
-    private InterestPayment interestPayment;
+    // valid ID (신분증 필수 여부)
+    @Column(name = "id_required", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean idRequired;
 
-    // 혜택
-    @Column(name = "card_benefits")
-    private String cardBenefits;
-
-    // 특징/부가 정보
-    @Column(name = "features")
-    private String features;
+    // 거주자 여부
+    @Column(name = "is_resident", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean isResident;
 
     // 공식 사이트 링크
     @Column(name = "website")

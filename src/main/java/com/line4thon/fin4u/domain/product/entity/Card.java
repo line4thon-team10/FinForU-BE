@@ -21,11 +21,25 @@ public class Card extends BaseEntity {
     @Column(name = "card_name", nullable = false)
     private String name;
 
-    // 혜택 실적 조건
-    @Column(name = "min_amound", nullable = false)
-    private int minAmount;
+    // 특징 정보
+    @Column(name = "features")
+    private String features;
 
-    // 혜택 한도
+    // 연회비
+    @Column(name = "annual_fee")
+    private int annualFee;
+
+    // 나이 자격
+    @Column(name = "min_age")
+    private Integer minAge;
+
+    // valid ID (신분증 필수 여부)
+    @Column(name = "id_required", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean idRequired;
+
+    // 거주자 여부
+    @Column(name = "is_resident", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean isResident;
 
     //카드 타입
     @Enumerated(EnumType.STRING)
@@ -33,16 +47,9 @@ public class Card extends BaseEntity {
     private CardType cardType;
 
     // 혜택
-    @Column(name = "card_benefits")
+    @Column(name = "card_benefits",columnDefinition = "JSON")
     private String cardBenefits;
 
-    // 연회비
-    @Column(name = "annual_fee")
-    private int annualFee;
-
-    // 특징/부가 정보
-    @Column(name = "features")
-    private String features;
 
     // 공식 사이트 링크
     @Column(name = "website")

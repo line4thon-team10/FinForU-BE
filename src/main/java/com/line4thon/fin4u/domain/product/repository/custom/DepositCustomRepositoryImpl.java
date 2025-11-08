@@ -62,15 +62,18 @@ public class DepositCustomRepositoryImpl implements DepositCustomRepository {
         return QDeposit.deposit.maxInterestRate.between(minRate, maxRate);
     }
 
-    // 기간
+    // 기간 (구체적 기간 + 유욘한 기간 조건이 2가지)
     private BooleanExpression termBetween(Integer maxTermMonths) {
         if (maxTermMonths == null)
             return null;
-        QDeposit deposit = QDeposit.deposit;
+        // 고정 기간 검색 조건 (예시: 12개월 이하)
+        BooleanExpression fixedTermCondition = QDeposit.deposit.depositTerm.loe(maxTermMonths);
 
-        // DTO에서 받은 기간(TermMonths) 이하의 상품만 검색
-        // loe : loe(Less or Equal)
-        return deposit.depositTerm.loe(maxTermMonths);
+        // 유연 기간 포함 조건 (isFlexible이 true인 상품은 무조건 포함)
+        BooleanExpression flexibleCondition = QDeposit.deposit.isFlexible.isTrue();
+
+        // 두 조건을 OR로 연결하여 반환: 고정 기간에 맞거나, 유연한 상품이거나
+        return fixedTermCondition.or(flexibleCondition);
     }
 
 }

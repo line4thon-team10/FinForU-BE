@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.product.repository.custom;
 
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.QBank;
+import com.line4thon.fin4u.domain.product.entity.QDeposit;
 import com.line4thon.fin4u.domain.product.entity.QInstallmentSaving;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -57,10 +58,14 @@ public class SavingCustomRepositoryImpl implements SavingCustomRepository{
     private BooleanExpression termBetween(Integer maxTermMonths) {
         if (maxTermMonths == null)
             return null;
-        QInstallmentSaving saving = QInstallmentSaving.installmentSaving;
 
-        // DTO에서 받은 기간(TermMonths) 이하의 상품만 검색
-        // loe : loe(Less or Equal)
-        return saving.savingTerm.loe(maxTermMonths);
+        // 1. 고정 기간 검색 조건 (예시: 12개월 이하)
+        BooleanExpression fixedTermCondition = QInstallmentSaving.installmentSaving.savingTerm.loe(maxTermMonths);
+
+        // 2. 유연 기간 포함 조건 (isFlexible이 true인 상품은 무조건 포함)
+        BooleanExpression flexibleCondition = QInstallmentSaving.installmentSaving.isFlexible.isTrue();
+
+        // 3. 두 조건을 OR로 연결하여 반환: 고정 기간에 맞거나, 유연한 상품이거나
+        return fixedTermCondition.or(flexibleCondition);
     }
 }
