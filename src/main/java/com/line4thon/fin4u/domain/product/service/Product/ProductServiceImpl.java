@@ -4,6 +4,7 @@ import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
+import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.exception.InvalidProductTypeException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
@@ -36,35 +37,35 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductFilterRes getFilterProduct(ProductFilterReq filter) {
 
-        String productType = filter.type();
+        List<ProductFilterRes.CardProductRes> cardRes = Collections.emptyList();
+        List<ProductFilterRes.DepositProductRes> depositRes = Collections.emptyList();
+        List<ProductFilterRes.SavingProductRes> savingRes = Collections.emptyList();
 
-        List<ProductFilterRes.CardProductRes> cardResponses = Collections.emptyList();
-        List<ProductFilterRes.DepositProductRes> depositResponses = Collections.emptyList();
-        List<ProductFilterRes.SavingProductRes> savingResponses = Collections.emptyList();
+        Type productType = filter.type();
 
         // null값이면 true (사용자가 상품 선택을 하지 않았을때)
-        boolean searchAll = filter.type() == null;
+        boolean searchAll = (productType == null);
 
         // 1. 예금 상품 검색
-        if (searchAll || "deposit".equalsIgnoreCase(productType)) {
-            depositResponses = searchDeposits(filter);
+        if (searchAll || productType == Type.DEPOSIT) {
+            depositRes = searchDeposits(filter);
         }
 
         // 2. 카드 상품 검색
-        if (searchAll || "card".equalsIgnoreCase(productType)) {
-            cardResponses = searchCards(filter);
+        if (searchAll || productType == Type.CARD) {
+            cardRes = searchCards(filter);
         }
 
         // 3. 적금 상품 검색
-        if (searchAll || "saving".equalsIgnoreCase(productType)) {
-            savingResponses = searchSavings(filter);
+        if (searchAll || productType == Type.SAVING) {
+            savingRes = searchSavings(filter);
         }
 
 
         return new ProductFilterRes(
-                cardResponses,
-                depositResponses,
-                savingResponses
+                cardRes,
+                depositRes,
+                savingRes
         );
     }
 
