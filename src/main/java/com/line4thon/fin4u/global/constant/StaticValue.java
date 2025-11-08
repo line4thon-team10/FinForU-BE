@@ -1,13 +1,13 @@
 package com.line4thon.fin4u.global.constant;
 
-/* Http 응답 코드 */
-public class StaticValue {
 
-    /* 2xx response */
+// 공통 응답
+public class StaticValue {
+    // 2XX case
     public static final int OK = 200;
     public static final int CREATED = 201;
 
-    /* 4xx response */
+    // 4XX case
     public static final int BAD_REQUEST = 400;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
@@ -15,6 +15,6 @@ public class StaticValue {
     public static final int METHOD_NOT_ALLOWED = 405;
     public static final int CONFLICT = 409;
 
-    /* 5xx response */
+    // 5XX case
     public static final int INTERNAL_SERVER_ERROR = 500;
 }

@@ -1,0 +1,80 @@
+package com.line4thon.fin4u.domain.guide.controller;
+
+import com.line4thon.fin4u.domain.guide.dto.GetGuideMainPage;
+import com.line4thon.fin4u.global.response.SuccessResponse;
+import jakarta.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+@Slf4j
+@RestController
+@RequestMapping("/guide")
+public class AiGuideController {
+
+    private final ChatClient chatClient;
+    private final MessageSource messageSource;
+
+    public AiGuideController(
+            @Qualifier("mcpClient") ChatClient chatClient,
+            @Qualifier("messageSource") MessageSource messageSource
+    ) {
+        this.chatClient = chatClient;
+        this.messageSource = messageSource;
+    }
+
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<?>> getMain(
+            Locale locale
+    ) {
+        GetGuideMainPage response;
+        List<GetGuideMainPage.Faq> questions = new ArrayList<>();
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "bank_account_open",
+                null,
+                locale
+        )));
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "bank_rules",
+                null,
+                locale
+        )));
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "voice_fishing",
+                null,
+                locale
+        )));
+
+        response = new GetGuideMainPage(
+                messageSource.getMessage(
+                        "hello_message",
+                        null,
+                        locale
+                ),
+                questions
+            );
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/query")
+    public ResponseEntity<SuccessResponse<?>> getAiGuide(
+            @RequestParam @NotBlank String message,
+            Locale locale
+    ) {
+        String response = chatClient.prompt("Default Language: " + locale.getLanguage() + message).call().content();
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+}

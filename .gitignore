@@ -38,6 +38,9 @@ out/
 
 ### Environment ###
 src/main/resources/application-secret.properties
+src/main/resources/application.yml
 
 ### MacOS ###
 .DS_Store
+
+mcp-servers-config.json
