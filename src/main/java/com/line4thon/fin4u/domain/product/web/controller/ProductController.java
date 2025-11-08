@@ -1,6 +1,7 @@
 package com.line4thon.fin4u.domain.product.web.controller;
 
-import com.line4thon.fin4u.domain.product.service.ProductService;
+import com.line4thon.fin4u.domain.product.service.Product.ProductServiceImpl;
+import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import com.line4thon.fin4u.global.response.SuccessResponse;
@@ -10,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
+    // 상품 검색(필터링)
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getFilterProduct(
             @ModelAttribute ProductFilterReq filter
@@ -25,5 +27,14 @@ public class ProductController {
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }
 
-    @GetMapping
+    // 상품 상세 조회
+    @GetMapping("/{type}/{id}")
+    public ResponseEntity<SuccessResponse<?>> getProductDetail(
+            @PathVariable("type") String type,
+            @PathVariable("id") Long id
+    ){
+        ProductDetailRes res = productService.getProductDetail(type, id);
+        return ResponseEntity.status(
+                HttpStatus.OK).body(SuccessResponse.ok(res));
+    }
 }

@@ -1,9 +1,18 @@
-package com.line4thon.fin4u.domain.product.service;
+package com.line4thon.fin4u.domain.product.service.Product;
 
+import com.line4thon.fin4u.domain.product.entity.Card;
+import com.line4thon.fin4u.domain.product.entity.CardBenefit;
+import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
+import com.line4thon.fin4u.domain.product.exception.InvalidProductTypeException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
+import com.line4thon.fin4u.domain.product.repository.CardBenefitRepository;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.DepositRepository;
 import com.line4thon.fin4u.domain.product.repository.InstallmentSavingRepository;
+import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final CardRepository cardRepo;
     private final DepositRepository depositRepo;
     private final InstallmentSavingRepository savingRepo;
-
+    private final CardBenefitRepository benefitRepository;
 
     //상품 조회
     @Override
@@ -57,6 +66,55 @@ public class ProductServiceImpl implements ProductService {
                 depositResponses,
                 savingResponses
         );
+    }
+
+    // 상품 상세 조회
+    @Override
+    public ProductDetailRes getProductDetail(String type, Long id) {
+
+        String productType = type.toLowerCase();
+
+        ProductDetailRes.CardDetailRes cardDetail = null;
+        ProductDetailRes.DepositDetailRes depositDetail = null;
+        ProductDetailRes.SavingDetailRes savingDetail = null;
+
+        switch(productType){
+            case "card":
+                Card card = cardRepo.findById(id)
+                        .orElseThrow(NotFoundCardException::new);
+
+                List<ProductDetailRes.CardBenefitDetail> cardBenefits = getCardBenefitsDetail(card);
+                cardDetail = ProductDetailRes.CardDetailRes.fromCard(card, cardBenefits);
+                break;
+            case "deposit":
+                Deposit deposit = depositRepo.findById(id)
+                        .orElseThrow(NotFoundDepositException::new);
+                depositDetail = ProductDetailRes.DepositDetailRes.fromDeposit(deposit);
+                break;
+            case "saving":
+                InstallmentSaving saving = savingRepo.findById(id)
+                        .orElseThrow(NotFoundSavingException::new);
+                savingDetail = ProductDetailRes.SavingDetailRes.fromSaving(saving);
+                break;
+            default:
+                throw new InvalidProductTypeException();
+        }
+
+        return new ProductDetailRes(
+                cardDetail,
+                depositDetail,
+                savingDetail
+        );
+    }
+
+    private List<ProductDetailRes.CardBenefitDetail> getCardBenefitsDetail(Card card){
+        List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
+        return benefits.stream()
+                .map(b ->{
+                        String category = b.getCategory().name();
+                        return new ProductDetailRes.CardBenefitDetail(category, b.getDescription());
+                })
+                .toList();
     }
 
     // 카드 상품 필터링 검색
