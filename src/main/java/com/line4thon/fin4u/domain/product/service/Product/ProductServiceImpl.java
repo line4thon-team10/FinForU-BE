@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
         List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
         return benefits.stream()
                 .map(b ->{
-                        String category = b.getCategory().name();
+                        String category = b.getBenefitCategory().name();
                         return new ProductDetailRes.CardBenefitDetail(category, b.getDescription());
                 })
                 .toList();
