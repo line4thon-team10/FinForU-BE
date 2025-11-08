@@ -6,6 +6,7 @@ import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.BenefitCategory;
 
+import java.util.Collections;
 import java.util.List;
 
 public record ProductFilterRes (
@@ -21,21 +22,19 @@ public record ProductFilterRes (
     ) {
         public static CardProductRes fromCard(Card card) {
 
-            String promotion = card.getCardBenefit().stream()
+            List<CardBenefit> benefits = card.getCardBenefit() == null
+                    ? Collections.emptyList()
+                    : card.getCardBenefit();
+
+            String promotion = benefits.stream()
                     .filter(b -> b.getBenefitCategory() == BenefitCategory.PROMOTION)
                     .map(CardBenefit::getDescription)
                     .findFirst()
                     .orElse(null);
 
-            String fee;
-            if(card.getDomesticAnnualFee() == 0)
-                fee = "no annual fee";
-            else fee = card.getDomesticAnnualFee()+"won fee.";
+            String fee = (card.getDomesticAnnualFee() == 0) ? "no annual fee" : card.getDomesticAnnualFee()+"won fee.";
 
-            String finalOutput;
-            if(promotion != null && !promotion.isBlank()){
-                finalOutput = promotion + " and " + fee;
-            }else finalOutput = fee;
+            String finalOutput = (promotion != null && !promotion.isBlank()) ? promotion + " and " + fee : fee;
 
             return new CardProductRes(
                     card.getId(),
