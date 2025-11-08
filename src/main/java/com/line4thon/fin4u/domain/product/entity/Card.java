@@ -5,6 +5,9 @@ import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -52,6 +55,9 @@ public class Card extends BaseEntity {
     // 공식 사이트 링크
     @Column(name = "website")
     private String officialWebsite;
+
+    @OneToMany(mappedBy = "card")
+    private List<CardBenefit> cardBenefit = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id")
