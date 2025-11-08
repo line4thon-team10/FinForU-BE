@@ -3,6 +3,7 @@ package com.line4thon.fin4u.domain.guide.controller;
 import com.line4thon.fin4u.domain.guide.dto.GetGuideMainPage;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import jakarta.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 @RestController
 @RequestMapping("/guide")
 public class AiGuideController {
@@ -38,23 +40,31 @@ public class AiGuideController {
             Locale locale
     ) {
         GetGuideMainPage response;
-        if(true) {
-            List<GetGuideMainPage.Faq> questions = new ArrayList<>();
-            questions.add(new GetGuideMainPage.Faq("How to open a bank account?"));
-            questions.add(new GetGuideMainPage.Faq("What are bank rules by country?"));
-            questions.add(new GetGuideMainPage.Faq("How do I stay safe from voice phishing or financial scams?"));
+        List<GetGuideMainPage.Faq> questions = new ArrayList<>();
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "bank_account_open",
+                null,
+                locale
+        )));
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "bank_rules",
+                null,
+                locale
+        )));
+        questions.add(new GetGuideMainPage.Faq(messageSource.getMessage(
+                "voice_fishing",
+                null,
+                locale
+        )));
 
-            response = new GetGuideMainPage(
-                    "Hello. I'm your AI assistant.\n How can I help you today?",
-                    questions
+        response = new GetGuideMainPage(
+                messageSource.getMessage(
+                        "hello_message",
+                        null,
+                        locale
+                ),
+                questions
             );
-        }
-//        else if(user.getLanguage().equals("chinese")) {
-//
-//        } else if(user.getLanguage().equals("vietnamese")) {
-//
-//        }
-
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
