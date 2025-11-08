@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.product.entity;
 
+import com.line4thon.fin4u.domain.product.entity.enums.BenefitCategory;
 import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,15 +10,16 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CardBenefits extends BaseEntity {
+public class CardBenefit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="card_benefits_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private String category;
+    private BenefitCategory category;
 
     @Column(name = "description")
     private String description;
