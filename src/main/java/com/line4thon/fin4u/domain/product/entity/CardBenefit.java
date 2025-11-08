@@ -19,7 +19,7 @@ public class CardBenefit extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private BenefitCategory category;
+    private BenefitCategory  benefitCategory;
 
     @Column(name = "description")
     private String description;
