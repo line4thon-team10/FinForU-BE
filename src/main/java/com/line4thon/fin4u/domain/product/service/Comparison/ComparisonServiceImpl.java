@@ -7,6 +7,7 @@ import com.line4thon.fin4u.domain.product.entity.Comparison;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundGuestTokenException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.ComparisonRepository;
@@ -42,10 +43,11 @@ public class ComparisonServiceImpl implements ComparisonService{
             memberRepo.findById(member.getMemberId())
                     .orElseThrow(MemberNotFoundException::new);
             comparisonRepo.save(Comparison.of(member, type, productId));
+            return;
         }
         //에러처리하기
         if(guestToken == null || guestToken.isBlank())
-            throw new RuntimeException();
+            throw new NotFoundGuestTokenException();
 
         comparisonRepo.save(Comparison.ofGuest(guestToken, type, productId));
     }
