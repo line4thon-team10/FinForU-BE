@@ -7,6 +7,7 @@ import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.Comparison;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
+import com.line4thon.fin4u.domain.product.entity.enums.CardType;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.ComparisonRepository;
@@ -25,9 +26,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static com.line4thon.fin4u.domain.member.entity.Member.Language.ENGLISH;
+import static com.line4thon.fin4u.domain.member.entity.Member.VisaType.ACCOUNT_OPEN;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,19 +66,30 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .email("tester@gmail.com")
                 .password("pw")
                 .name("테스터")
+                .language(Member.Language.ENGLISH)
+                .nationality("KOR")
+                .visaType(Member.VisaType.ACCOUNT_OPEN)
+                .visa_expir(Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS)))
+                .notify(true)
                 .build());
 
         cardA = cardRepository.save(Card.builder()
                 .name("무지출카드")
+                .description("카드 A 설명")
+                .cardType(CardType.CHECK)
                 .domesticAnnualFee(0)
                 .build());
+
         depositA = depositRepository.save(Deposit.builder()
                 .name("일반예금")
+                .description("예금 A 설명")
+                .minDepositAmount(2)
                 .maxInterestRate(3.2)
                 .depositTerm(12)
                 .build());
         savingA = savingRepository.save(InstallmentSaving.builder()
                 .name("청년적금")
+                .description("적금 A 설명")
                 .maxInterestRate(4.1)
                 .savingTerm(24)
                 .build());
@@ -82,7 +100,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
     void saveProduct_success() throws Exception {
         ComparisonSaveReq req = new ComparisonSaveReq(Type.CARD, cardA.getId(), null);
 
-        mockMvc.perform(post("/comparison")
+        mockMvc.perform(post("/products/comparison")
+                        .with(user(member.getEmail()).roles("USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
@@ -100,7 +119,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         comparisonRepository.save(Comparison.of(member, Type.DEPOSIT, depositA.getId()));
         comparisonRepository.save(Comparison.of(member, Type.SAVING, savingA.getId()));
 
-        mockMvc.perform(get("/comparison"))
+        mockMvc.perform(get("/products/comparison")
+                .with(user(member.getEmail()).roles("USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
                 .andExpect(jsonPath("$.data.deposits.length()").value(1))
@@ -114,7 +134,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         comparisonRepository.save(Comparison.of(member, Type.DEPOSIT, depositA.getId()));
         comparisonRepository.save(Comparison.of(member, Type.SAVING, savingA.getId()));
 
-        mockMvc.perform(get("/comparison")
+        mockMvc.perform(get("/products/comparison")
+                        .with(user(member.getEmail()).roles("USER"))
                         .param("type", "CARD")) // QueryParam 로 전달
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
