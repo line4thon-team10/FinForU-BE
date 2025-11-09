@@ -18,10 +18,12 @@ public class Member {
     @Column(name="member_id",unique = true, nullable = false)
     private Long memberId;
 
+    //언어 설정은 로그인이 안되도 되야 해서 쿠키설정 필요
     public enum Language { ENGLISH, CHINESE, VIETNAMESE }
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Language language;
+
 
     @Column(nullable=false, unique=true)
     private String email;

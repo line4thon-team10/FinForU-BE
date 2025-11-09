@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class AuthController {
 
