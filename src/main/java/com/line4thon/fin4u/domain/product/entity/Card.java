@@ -51,7 +51,7 @@ public class Card extends BaseEntity {
     private List<CardBenefit> cardBenefit = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bank_id")
+    @JoinColumn(name = "bank_id",nullable = false)
     private Bank bank;
 
 }

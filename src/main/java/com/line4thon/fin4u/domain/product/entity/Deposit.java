@@ -48,7 +48,7 @@ public class Deposit extends BaseEntity {
     private String officialWebsite;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bank_id")
+    @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
 
 }
