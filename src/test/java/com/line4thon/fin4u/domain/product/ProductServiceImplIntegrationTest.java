@@ -69,9 +69,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .depositTerm(36)
                         .isFlexible(false)
                         .minDepositAmount(100000)
-                        .minAge(19)
-                        .idRequired(true)
-                        .isResident(true)
                         .build()
         );
 
@@ -97,9 +94,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .savingTerm(12)
                         .isFlexible(true)
                         .maxMonthly(500000)
-                        .minAge(15)
-                        .idRequired(false)
-                        .isResident(true)
                         .build()
         );
         savingB = savingRepository.save(
@@ -122,9 +116,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .description("카드 A 설명")
                         .domesticAnnualFee(15000)
                         .internationalAnnualFee(20000)
-                        .minAge(20)
-                        .idRequired(true)
-                        .isResident(true)
                         .build()
         );
         cardB = cardRepository.save(
@@ -301,9 +292,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         assertThat(result.cardDetail().bank()).isEqualTo(greenTreeBank.getBankName());
         assertThat(result.cardDetail().internationalAnnualFee()).isEqualTo(20000);
 
-        // 자격 조건 검증 (Entity의 설정값 확인)
-        assertThat(result.cardDetail().eligibility().age()).isEqualTo(20);
-        assertThat(result.cardDetail().eligibility().validId()).isTrue();
     }
 
     @DisplayName("상세 조회: 예금 상품 ID로 상세 정보를 성공적으로 조회한다.")
@@ -327,9 +315,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         assertThat(result.depositDetail().name()).isEqualTo("High Rate 3Y");
         assertThat(result.depositDetail().maxRate()).isEqualTo(4.5);
         assertThat(result.depositDetail().termMonths()).isEqualTo(36);
-
-        // 자격 조건 검증
-        assertThat(result.depositDetail().eligibility().age()).isEqualTo(19);
     }
 
     @DisplayName("상세 조회: 적금 상품 ID로 상세 정보를 성공적으로 조회한다.")
@@ -355,9 +340,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         assertThat(result.savingDetail().termMonths()).isEqualTo(12);
         assertThat(result.savingDetail().isFlexible()).isTrue();
 
-        // 자격 조건 검증
-        assertThat(result.savingDetail().eligibility().age()).isEqualTo(15);
-        assertThat(result.savingDetail().eligibility().validId()).isFalse();
     }
 
     // -----------------------------------------------------------

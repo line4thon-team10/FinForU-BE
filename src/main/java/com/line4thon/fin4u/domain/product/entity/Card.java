@@ -28,6 +28,10 @@ public class Card extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "card_type", nullable = false)
+    private CardType cardType;
+
     // 연회비
     @Column(name = "domestic_annual_fee")
     private int domesticAnnualFee;
@@ -38,19 +42,6 @@ public class Card extends BaseEntity {
     // 나이 자격
     @Column(name = "min_age")
     private Integer minAge;
-
-    // valid ID (신분증 필수 여부)
-    @Column(name = "id_required", columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean idRequired;
-
-    // 거주자 여부
-    @Column(name = "is_resident", columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean isResident;
-
-    //카드 타입
-    @Enumerated(EnumType.STRING)
-    @Column(name = "card_type", nullable = false)
-    private CardType cardType;
 
     // 공식 사이트 링크
     @Column(name = "website")
