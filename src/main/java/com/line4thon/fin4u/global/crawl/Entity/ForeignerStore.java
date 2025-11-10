@@ -21,11 +21,29 @@ public class ForeignerStore extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String bankName;
+    private String branchName;
     private String zipCode;
     private LocalTime weekClose;
     private LocalTime weekendClose;
     private String phoneNum;
     private Double longitude;
     private Double latitude;
+
+    @Builder(builderMethodName = "rebuild")
+    public void build(
+            String zipCode,
+            LocalTime weekClose,
+            LocalTime weekendClose,
+            String phoneNum,
+            Double longitude,
+            Double latitude) {
+        this.zipCode = zipCode;
+        this.weekClose = weekClose;
+        this.weekendClose = weekendClose;
+        this.phoneNum = phoneNum;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
 }
