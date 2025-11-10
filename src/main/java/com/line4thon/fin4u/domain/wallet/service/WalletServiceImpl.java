@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.wallet.service;
 
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
+import com.line4thon.fin4u.domain.wallet.entity.CheckingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
 import com.line4thon.fin4u.domain.wallet.entity.WalletCard;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
@@ -10,6 +11,7 @@ import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
 import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,8 +70,30 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Void addCheckingAccount(Long memberId) {
-        return null;
+    public MainWalletRes.CheckingAccounts addCheckingAccount(Long memberId, CheckingAccountReq request) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseGet(() ->
+                        walletRepository.save(Wallet.builder()
+                                .member(memberRepository.findByMemberId(memberId)
+                                        .orElseThrow(MemberNotFoundException::new))
+                                .build())
+                );
+
+        CheckingAccount checkingAccount = CheckingAccount.builder()
+                .wallet(wallet)
+                .bank(request.getBank())
+                .build();
+        List<CheckingAccount> accounts = wallet.getCheckingAccounts();
+        if(accounts == null) {
+            accounts = new ArrayList<>();
+        }
+        accounts.add(checkingAccount);
+
+        checkingAccountRepository.save(checkingAccount);
+        return MainWalletRes.CheckingAccounts(
+                checkingAccount.getId(),
+                checkingAccount.getBank()
+        );
     }
 
     @Override
@@ -108,7 +132,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Void editCheckAccountDetail(Long memberId) {
+    public Void editCheckAccountDetail(Long memberId, CheckingAccountReq request) {
         return null;
     }
 
