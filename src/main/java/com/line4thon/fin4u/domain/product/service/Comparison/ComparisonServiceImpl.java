@@ -3,7 +3,10 @@ package com.line4thon.fin4u.domain.product.service.Comparison;
 import com.line4thon.fin4u.domain.member.entity.Member;
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
+import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.Comparison;
+import com.line4thon.fin4u.domain.product.entity.Deposit;
+import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
@@ -13,12 +16,14 @@ import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.ComparisonRepository;
 import com.line4thon.fin4u.domain.product.repository.DepositRepository;
 import com.line4thon.fin4u.domain.product.repository.InstallmentSavingRepository;
+import com.line4thon.fin4u.domain.product.web.dto.CompareRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +40,12 @@ public class ComparisonServiceImpl implements ComparisonService{
     //바구니 저장
     @Override
     @Transactional
-    public void saveProduct(String email, String guestToken, Type type, Long productId) {
+    public void saveProduct(Principal principal, String guestToken, Type type, Long productId) {
         // 존재 상품인지 확인
         validateProductExists(type, productId);
 
         // 회원, 비회원 검증
-        UserKey user = checkMember(email, guestToken);
+        UserKey user = checkMember(principal, guestToken);
 
         Comparison comparison = (user.member() != null)
                 ? Comparison.of(user.member(), type, productId)
@@ -52,9 +57,9 @@ public class ComparisonServiceImpl implements ComparisonService{
 
     // 바구니 조회&필터링
     @Override
-    public ProductFilterRes getComparisonFilter(String email, String guestToken, ProductFilterReq filter) {
+    public ProductFilterRes getComparisonFilter(Principal principal, String guestToken, ProductFilterReq filter) {
         // 회원, 비회원 검증
-        UserKey user = checkMember(email, guestToken);
+        UserKey user = checkMember(principal, guestToken);
 
         // 1. 각 바구니
         List<Comparison> products = (user.member() != null)
@@ -86,10 +91,13 @@ public class ComparisonServiceImpl implements ComparisonService{
         );
     }
 
+
     private record UserKey(Member member, String guestToken) {}
 
     // 회원, 비회원 검증
-    private UserKey checkMember(String email, String guestToken){
+    private UserKey checkMember(Principal principal, String guestToken){
+        String email = (principal != null) ? principal.getName() : null;
+
         if(email != null) {
             Member member =  memberRepo.findByEmail(email)
                     .orElseThrow(MemberNotFoundException::new);
