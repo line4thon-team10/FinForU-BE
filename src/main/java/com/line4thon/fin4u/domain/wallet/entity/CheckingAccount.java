@@ -1,10 +1,13 @@
 package com.line4thon.fin4u.domain.wallet.entity;
 
+import com.line4thon.fin4u.domain.wallet.entity.enumulate.Bank;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -20,5 +23,5 @@ public class CheckingAccount {
     private Wallet wallet;
 
     @Column(nullable = false)
-    private String checkingAccountName;
+    private Bank bank;
 }
