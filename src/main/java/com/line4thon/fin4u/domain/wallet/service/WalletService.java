@@ -1,10 +1,8 @@
 package com.line4thon.fin4u.domain.wallet.service;
 
-import com.line4thon.fin4u.domain.wallet.entity.CheckingAccount;
-import com.line4thon.fin4u.domain.wallet.entity.SavingAccount;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 
-public interface WallerService {
+public interface WalletService {
 
     // Main Page
     MainWalletRes getWalletMainPage(Long memberId);
