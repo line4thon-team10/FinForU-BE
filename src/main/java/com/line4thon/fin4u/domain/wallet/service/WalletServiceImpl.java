@@ -4,7 +4,7 @@ import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
-import com.line4thon.fin4u.domain.wallet.repository.WallerRepository;
+import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class WalletServiceImpl implements WallerService{
 
     private final MemberRepository memberRepository;
-    private final WallerRepository walletRepository;
+    private final WalletRepository walletRepository;
     private final SavingAccountRepository savingAccountRepository;
     private final CheckingAccountRepository checkingAccountRepository;
     private final CardRepository cardRepository;
 
     @Override
     public Object getWalletMainPage(Long memberId) {
+
         return null;
     }
 
