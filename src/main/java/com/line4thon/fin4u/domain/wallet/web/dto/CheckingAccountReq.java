@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CheckingAccountReq {
+    private Long checkingAccountId;
+
     @NotNull(message = "은행은 비어있을 수 없습니다.")
     private Bank bank;
 }
