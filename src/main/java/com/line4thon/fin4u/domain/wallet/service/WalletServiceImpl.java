@@ -227,18 +227,21 @@ public class WalletServiceImpl implements WalletService {
     @Override
     @Transactional
     public Void deleteCheckAccount(Long memberId, Long checkingAccountId) {
+        checkingAccountRepository.deleteById(checkingAccountId);
         return null;
     }
 
     @Override
     @Transactional
     public Void deleteSavingAccount(Long memberId, Long savingAccountId) {
+        savingAccountRepository.deleteById(savingAccountId);
         return null;
     }
 
     @Override
     @Transactional
     public Void deleteCard(Long memberId, Long cardId) {
+        cardRepository.deleteById(cardId);
         return null;
     }
 }
