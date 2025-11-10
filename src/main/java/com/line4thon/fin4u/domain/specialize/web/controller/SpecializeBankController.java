@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.specialize.web.controller;
 
+import com.line4thon.fin4u.domain.specialize.exception.SpecializeBankNotFoundException;
 import com.line4thon.fin4u.global.crawl.Entity.ForeignerStore;
 import com.line4thon.fin4u.global.crawl.repository.ForeignerStoreRepository;
 import com.line4thon.fin4u.global.response.SuccessResponse;
@@ -26,7 +27,7 @@ public class SpecializeBankController {
         List<ForeignerStore> response = repository.findAll();
 
         if (response.isEmpty()) {
-            throw new RuntimeException();
+            throw new SpecializeBankNotFoundException();
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
