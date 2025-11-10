@@ -31,7 +31,7 @@ public class ComparisonController {
     public ResponseEntity<SuccessResponse<?>> saveProducts(
             Principal principal,
             @RequestParam(required = false) String guestToken,
-            @RequestBody CompareSaveReq req
+            @Valid @RequestBody CompareSaveReq req
             ){
         comparisonService.saveProduct(principal, guestToken, req.type(), req.productId());
 
@@ -55,8 +55,8 @@ public class ComparisonController {
     //상품비교
     @GetMapping("/details")
     public ResponseEntity<SuccessResponse<?>> comparing(
-            @RequestParam("productIds")List<Long> productIds,
-            @RequestParam("type") Type type
+            @RequestParam(value = "type", required = true) Type type,
+            @RequestParam(value = "productIds", required = true)List<Long> productIds
     ){
 
         CompareRes res = comparisonService.compare(productIds, type);
