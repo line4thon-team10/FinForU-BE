@@ -5,11 +5,13 @@ import com.line4thon.fin4u.domain.wallet.entity.enumulate.Bank;
 import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -45,4 +47,23 @@ public class SavingAccount extends BaseEntity {
     private LocalDate startDate;
     @Column(nullable = false)
     private LocalDate endDate;
+
+    public void modify(
+            Bank bank,
+            Account productType,
+            String productName,
+            LocalDate startDate,
+            LocalDate endDate,
+            Integer monthlyPay,
+            Integer paymentDate
+    ) {
+        this.bank = bank;
+        this.savingType = productType;
+        this.savingName = productName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.monthlyPay = monthlyPay;
+        this.paymentDate = paymentDate;
+
+    }
 }
