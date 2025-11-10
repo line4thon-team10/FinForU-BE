@@ -3,6 +3,7 @@ package com.line4thon.fin4u.domain.wallet.service;
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.entity.CheckingAccount;
+import com.line4thon.fin4u.domain.wallet.entity.SavingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
 import com.line4thon.fin4u.domain.wallet.entity.WalletCard;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
@@ -13,6 +14,7 @@ import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
 import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
+import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,7 +90,6 @@ public class WalletServiceImpl implements WalletService {
             accounts = new ArrayList<>();
         }
         accounts.add(checkingAccount);
-
         checkingAccountRepository.save(checkingAccount);
         return new MainWalletRes.CheckingAccounts(
                 checkingAccount.getId(),
@@ -98,8 +99,36 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Void addSavingAccount(Long memberId) {
-        return null;
+    public MainWalletRes.SavingAccounts addSavingAccount(Long memberId, SavingAccountReq request) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseGet(() -> walletRepository.save(
+                        new Wallet().builder()
+                                .member(memberRepository.findByMemberId(memberId)
+                                        .orElseThrow(MemberNotFoundException::new))
+                                .build()
+                ));
+
+        List<SavingAccount> savingAccounts = wallet.getSavingAccounts();
+        if(savingAccounts == null) {
+            savingAccounts = new ArrayList<>();
+        }
+
+        SavingAccount account = SavingAccount.builder()
+                .wallet(wallet)
+                .bank(request.getBank())
+                .savingType(request.getProductType())
+                .savingName(request.getProductName())
+                .monthlyPay(request.getMonthlyPayment())
+                .paymentDate(request.getUpcomingDate())
+                .startDate(request.getStart())
+                .endDate(request.getEnd())
+                .build();
+        savingAccounts.add(account);
+        savingAccountRepository.save(account);
+        return new MainWalletRes.SavingAccounts(
+                account.getId(),
+                account.getBank().getLower()
+        );
     }
 
     @Override
@@ -172,25 +201,44 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Void editSavingAccountDetail(Long memberId) {
+    public MainWalletRes.SavingAccounts editSavingAccountDetail(Long memberId, SavingAccountReq request) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        Map<Long, SavingAccount> accountMap = wallet.getSavingAccounts().stream()
+                .collect(Collectors.toMap(SavingAccount::getId, s -> s));
+
+        SavingAccount found = accountMap.get(request.getSavingAccountId());
+
+        found.modify(
+                request.getBank(),
+                request.getProductType(),
+                request.getProductName(),
+                request.getStart(),
+                request.getEnd(),
+                request.getMonthlyPayment(),
+                request.getUpcomingDate());
+        return new MainWalletRes.SavingAccounts(
+                found.getId(),
+                found.getSavingName()
+        );
+    }
+
+    @Override
+    @Transactional
+    public Void deleteCheckAccount(Long memberId, Long checkingAccountId) {
         return null;
     }
 
     @Override
     @Transactional
-    public Void deleteCheckAccount(Long memberId) {
+    public Void deleteSavingAccount(Long memberId, Long savingAccountId) {
         return null;
     }
 
     @Override
     @Transactional
-    public Void deleteSavingAccount(Long memberId) {
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public Void deleteCard(Long memberId) {
+    public Void deleteCard(Long memberId, Long cardId) {
         return null;
     }
 }
