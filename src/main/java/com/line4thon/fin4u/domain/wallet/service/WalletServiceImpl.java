@@ -42,7 +42,7 @@ public class WalletServiceImpl implements WalletService {
         List<MainWalletRes.CheckingAccounts> checks = wallet.getCheckingAccounts().stream()
                 .map(c -> new MainWalletRes.CheckingAccounts(
                         c.getId(),
-                        c.getCheckingAccountName()
+                        c.getBank().getLower()
                 ))
                 .toList();
 
