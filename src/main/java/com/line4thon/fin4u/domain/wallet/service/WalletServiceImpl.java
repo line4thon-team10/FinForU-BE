@@ -90,9 +90,9 @@ public class WalletServiceImpl implements WalletService {
         accounts.add(checkingAccount);
 
         checkingAccountRepository.save(checkingAccount);
-        return MainWalletRes.CheckingAccounts(
+        return new MainWalletRes.CheckingAccounts(
                 checkingAccount.getId(),
-                checkingAccount.getBank()
+                checkingAccount.getBank().getLower()
         );
     }
 
