@@ -24,4 +24,8 @@ public class CheckingAccount {
 
     @Column(nullable = false)
     private Bank bank;
+
+    public void modify(Bank bank) {
+        this.bank = bank;
+    }
 }
