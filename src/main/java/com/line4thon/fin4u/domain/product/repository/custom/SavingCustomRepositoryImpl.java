@@ -69,38 +69,45 @@ public class SavingCustomRepositoryImpl implements SavingCustomRepository{
     private BooleanExpression bankEq(String bankName){
         if(bankName == null)
             return null;
-        return QBank.bank.bankName.equalsIgnoreCase(bankName);
+        return QBank.bank.bankName.lower().eq(bankName.toLowerCase());
     }
 
     // 금리 (우대 금리 기준)
     private BooleanExpression rateBetween(Double minRate, Double maxRate){
-        if (minRate == null && maxRate == null)
-            return null;
+        //조건이 없을 경우 항상 참
+        BooleanExpression expr = Expressions.asBoolean(true).isTrue();
 
         // loe : 작거나 같을때
-        if (minRate == null)
-            return QDeposit.deposit.maxInterestRate.loe(maxRate);
+        if (maxRate != null) {
+            expr = expr.and(QInstallmentSaving.installmentSaving.maxInterestRate.loe(maxRate));
+        }
 
         // goe : 크거나 같을때
-        if (maxRate == null)
-            return QDeposit.deposit.maxInterestRate.goe(minRate);
+        if (minRate != null) {
+            expr = expr.and(QInstallmentSaving.installmentSaving.maxInterestRate.goe(minRate));
+        }
 
-        return QDeposit.deposit.maxInterestRate.between(minRate, maxRate);
+        return expr;
     }
 
     // 기간 (구체적 기간 + 유연한 기간 조건이 2가지)
     private BooleanExpression termBetween(Integer maxTermMonths) {
-        if (maxTermMonths == null)
-            return null;
+        //조건이 없을 경우 항상 참
+        BooleanExpression expr = Expressions.asBoolean(true).isTrue();
 
-        // 3년 이상일때
+        if (maxTermMonths == null)
+            return expr;
+
+        // 3년 이상일때 + 유연한 기간
         if (maxTermMonths == -1) {
-            return QDeposit.deposit.depositTerm.goe(36)
-                    .or(QDeposit.deposit.isFlexible.isTrue());
+            return expr.and(
+                    QInstallmentSaving.installmentSaving.savingTerm.goe(36)
+                            .or(QInstallmentSaving.installmentSaving.isFlexible.isTrue()));
         }
 
         // 1년이하 / 3년 이하 + 유연한 기간
-        return QDeposit.deposit.depositTerm.loe(maxTermMonths)
-                .or(QDeposit.deposit.isFlexible.isTrue());
+        return expr.and(
+                QInstallmentSaving.installmentSaving.savingTerm.loe(maxTermMonths)
+                        .or(QInstallmentSaving.installmentSaving.isFlexible.isTrue()));
     }
 }

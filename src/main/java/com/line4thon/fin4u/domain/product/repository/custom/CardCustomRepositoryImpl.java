@@ -63,6 +63,6 @@ public class CardCustomRepositoryImpl implements CardCustomRepository{
     private BooleanExpression bankEq(String bankName){
         if(bankName == null)
             return null;
-        return QBank.bank.bankName.equalsIgnoreCase(bankName);
+        return QBank.bank.bankName.lower().eq(bankName.toLowerCase());
     }
 }
