@@ -114,6 +114,7 @@ public class CrawlerItemProcessor implements ItemProcessor<String, List<Foreigne
             response.add(ForeignerStore.builder()
                     .bankName(branch.getBankName())
                     .branchName(branch.getBranchName())
+                    .roadAddress(replaced)
                     .zipCode(zipCode)
                     .weekClose(parseToTime(times.getFirst()))
                     .weekendClose(parseToTime(times.get(1)))
