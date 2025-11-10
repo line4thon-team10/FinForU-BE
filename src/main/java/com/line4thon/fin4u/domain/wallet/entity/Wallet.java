@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -20,6 +18,6 @@ public class Wallet extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable=false)
+    @JoinColumn(name = "member_id", nullable=false)
     private Member member;
 }
