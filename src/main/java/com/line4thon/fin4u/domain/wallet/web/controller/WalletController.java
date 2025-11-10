@@ -6,7 +6,9 @@ import com.line4thon.fin4u.domain.wallet.service.WalletService;
 import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
+import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
 import com.line4thon.fin4u.global.response.SuccessResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,16 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
+    @PostMapping("/save-account")
+    public ResponseEntity<SuccessResponse<?>> addSavingAccount(
+            Principal principal,
+            @RequestBody @Validated SavingAccountReq request
+    ) {
+        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        MainWalletRes.SavingAccounts response = walletService.addSavingAccount(getMemberId(principal.getName()), request);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
     @PutMapping("/card")
     public ResponseEntity<SuccessResponse<?>> modifyCardDetail(
             Principal principal,
@@ -89,5 +101,45 @@ public class WalletController {
         MainWalletRes.CheckingAccounts response = walletService.editCheckAccountDetail(getMemberId(principal.getName()), request);
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @PutMapping("/save-account")
+    public ResponseEntity<SuccessResponse<?>> modifySavingAccount(
+            Principal principal,
+            @RequestBody @Validated SavingAccountReq request
+    ) {
+        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        MainWalletRes.SavingAccounts response = walletService.editSavingAccountDetail(getMemberId(principal.getName()), request);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @DeleteMapping("/card/{cardId}")
+    public ResponseEntity<SuccessResponse<?>> deleteCard(
+            Principal principal,
+            @PathVariable @NotNull Long cardId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        walletService.deleteCard(getMemberId(principal.getName()), cardId);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
+    }
+
+    @DeleteMapping("/check-account/{checkingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> deleteCheckingAccount(
+            Principal principal,
+            @PathVariable @NotNull Long checkingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        walletService.deleteCheckAccount(getMemberId(principal.getName()), checkingAccountId);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
+    }
+
+    @DeleteMapping("/save-account/{savingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> deleteSavingAccount(
+            Principal principal,
+            @PathVariable @NotNull Long savingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        walletService.deleteCard(getMemberId(principal.getName()), savingAccountId);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
 }
