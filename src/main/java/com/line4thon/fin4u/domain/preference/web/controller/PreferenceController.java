@@ -30,7 +30,7 @@ public class PreferenceController {
         SavePreferRes res = preferService.savePrefer(principal, req);
 
         return ResponseEntity.status(
-                HttpStatus.CREATED).body(SuccessResponse.created("저장 완료"));
+                HttpStatus.CREATED).body(SuccessResponse.created(res));
     }
 
     // 조회

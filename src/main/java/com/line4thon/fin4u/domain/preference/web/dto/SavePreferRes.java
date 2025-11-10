@@ -25,4 +25,15 @@ public record SavePreferRes(
         );
 
     }
+
+    public static SavePreferRes defaultResponse() {
+        return new SavePreferRes(
+                List.of(),
+                List.of(),
+                null,
+                null,
+                null,
+                null
+        );
+    }
 }
