@@ -4,6 +4,7 @@ import com.line4thon.fin4u.domain.member.entity.Member;
 import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Wallet extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
