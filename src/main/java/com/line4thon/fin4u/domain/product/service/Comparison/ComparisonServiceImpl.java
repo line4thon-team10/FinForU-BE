@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -89,6 +90,133 @@ public class ComparisonServiceImpl implements ComparisonService{
                 searchDeposits(filter, depositIds),
                 searchSavings(filter, savingIds)
         );
+    }
+
+    // 상품 비교
+    @Override
+    public CompareRes compare(List<Long> productIds, Type type) {
+        // 상품 검증
+        productIds.forEach(id -> validateProductExists(type, id));
+
+        return switch(type){
+            case CARD -> compareCard(productIds);
+            case DEPOSIT -> compareDeposit(productIds);
+            case SAVING -> compareSaving(productIds);
+        };
+    }
+
+    // 카드 비교
+    private CompareRes compareCard(List<Long> productIds) {
+
+        List<Card> cards = cardRepo.findAllById(productIds);
+
+        if(cards.size() != productIds.size())
+            throw new NotFoundSavingException();
+
+        // 국내 연회비
+        Long lowestDomesticId = cards.stream()
+                .min(Comparator.comparing(Card::getDomesticAnnualFee))
+                .map(Card::getId)
+                .orElse(null); //동일하면 null
+
+        // 국외 연회비
+        Long lowestInternationalId = cards.stream()
+                .min(Comparator.comparing(Card::getInternationalAnnualFee))
+                .map(Card::getId)
+                .orElse(null); //동일시 null
+
+
+        // 반환
+        List<CompareRes.CardCompareRes> result = cards.stream()
+                .map(CompareRes.CardCompareRes::fromCard)
+                .toList();
+
+        CompareRes.Highlights highlight = CompareRes.cardHighlight(lowestDomesticId, lowestInternationalId);
+
+        return new CompareRes(
+            result, null, null,
+                highlight
+        );
+    }
+
+    // 예금 비교
+    private CompareRes compareDeposit(List<Long> productIds) {
+
+        List<Deposit> deposits= depositRepo.findAllById(productIds);
+
+        if(deposits.size() != productIds.size())
+            throw new NotFoundDepositException();
+
+        //기본 금리
+        Long bestBaseRateId = deposits.stream()
+                .max(Comparator.comparing(Deposit::getBaseInterestRate))
+                .map(Deposit::getId)
+                .orElse(null); //동일시 null
+
+        //최대 금리
+        Long bestMaxRateId = deposits.stream()
+                .max(Comparator.comparing(Deposit::getMaxInterestRate))
+                .map(Deposit::getId)
+                .orElse(null);
+
+        //월 납입한도
+        Long lowestMinDepositId = deposits.stream()
+                .min(Comparator.comparing(Deposit::getMinDepositAmount))
+                .map(Deposit::getId)
+                .orElse(null);
+
+        //반환
+        List<CompareRes.DepositCompareRes> result = deposits.stream()
+                        .map(CompareRes.DepositCompareRes::fromDeposit)
+                        .toList();
+
+        CompareRes.Highlights highlight= CompareRes.depositHighlight(bestBaseRateId, bestMaxRateId, lowestMinDepositId);
+
+        return new CompareRes(
+                null, result, null,
+                highlight
+        );
+
+    }
+
+    // 적금 비교
+    private CompareRes compareSaving(List<Long> productIds) {
+
+        List<InstallmentSaving> savings = savingRepo.findAllById(productIds);
+
+        if (savings.size() != productIds.size())
+            throw new NotFoundSavingException();
+
+        //기본 금리
+        Long bestBaseRateId = savings.stream()
+                .max(Comparator.comparing(InstallmentSaving::getBaseInterestRate))
+                .map(InstallmentSaving::getId)
+                .orElse(null);
+
+        //최대 금리
+        Long bestMaxRateId = savings.stream()
+                .max(Comparator.comparing(InstallmentSaving::getMaxInterestRate))
+                .map(InstallmentSaving::getId)
+                .orElse(null);
+
+        //월 납입 한도
+        Long lowestMaxMonthly = savings.stream()
+                .min(Comparator.comparing(InstallmentSaving::getMaxMonthly))
+                .map(InstallmentSaving::getId)
+                .orElse(null);
+
+        //반환
+        List<CompareRes.SavingCompareRes> result = savings.stream()
+                .map(CompareRes.SavingCompareRes::fromSaving)
+                .toList();
+
+        CompareRes.Highlights highlight = CompareRes.savingHighlight(bestBaseRateId, bestMaxRateId, lowestMaxMonthly);
+
+        return new CompareRes(
+                null,null, result,
+                highlight
+        );
+
     }
 
 

@@ -52,7 +52,14 @@ public class ComparisonController {
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }
 
+    //상품비교
+    @GetMapping("/details")
+    public ResponseEntity<SuccessResponse<?>> comparing(
+            @RequestParam("productIds")List<Long> productIds,
+            @RequestParam("type") Type type
+    ){
 
+        CompareRes res = comparisonService.compare(productIds, type);
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }
