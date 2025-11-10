@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -37,4 +39,10 @@ public class SavingAccount extends BaseEntity {
     private Integer monthlyPay;
 
     private Integer paymentDate;
+
+    // 테이블을 나눌 필요가 없는 것 같아 한번에 작성
+    @Column(nullable = false)
+    private LocalDate startDate;
+    @Column(nullable = false)
+    private LocalDate endDate;
 }
