@@ -24,7 +24,7 @@ public class Wallet extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Card> cards;
+    private List<WalletCard> cards;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CheckingAccount> checkingAccounts;
