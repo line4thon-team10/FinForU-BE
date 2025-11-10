@@ -15,7 +15,7 @@ import java.util.List;
 public class Wallet {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="wallet_id")
+    @Column(name ="wallet_id", nullable = false)
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)

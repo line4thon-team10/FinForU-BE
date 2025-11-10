@@ -24,6 +24,7 @@ public class Card extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private String cardType;
 
+    @Column(nullable = false)
     private String cardName;
     private Integer paymentDate;
 }
