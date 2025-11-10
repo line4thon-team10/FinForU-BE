@@ -15,7 +15,7 @@ public interface WalletService {
     MainWalletRes.Cards addCard(Long memberId, CardReq request);
 
     // EDIT
-    Void editCheckAccountDetail(Long memberId, CheckingAccountReq request);
+    MainWalletRes.CheckingAccounts editCheckAccountDetail(Long memberId, CheckingAccountReq request);
     MainWalletRes.Cards editCardDetail(Long memberId, CardReq request);
     Void editSavingAccountDetail(Long memberId);
 

@@ -132,8 +132,20 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Void editCheckAccountDetail(Long memberId, CheckingAccountReq request) {
-        return null;
+    public MainWalletRes.CheckingAccounts editCheckAccountDetail(Long memberId, CheckingAccountReq request) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        Map<Long, CheckingAccount> accountMap = wallet.getCheckingAccounts().stream()
+                .collect(Collectors.toMap(CheckingAccount::getId, c -> c));
+
+        CheckingAccount found = accountMap.get(request.getCheckingAccountId());
+
+        found.modify(request.getBank());
+        return new MainWalletRes.CheckingAccounts(
+                found.getId(),
+                found.getBank().getLower()
+        );
     }
 
     @Override
