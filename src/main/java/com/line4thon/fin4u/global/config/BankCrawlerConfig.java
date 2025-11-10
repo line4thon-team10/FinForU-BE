@@ -17,8 +17,13 @@ import com.line4thon.fin4u.global.crawl.repository.ForeignerStoreRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -41,10 +46,54 @@ public class BankCrawlerConfig {
         return new ListItemReader<>(bankNamesToCrawl);
     }
     @Bean
+    @Transactional
     public ItemWriter<List<ForeignerStore>> foreignerStoreListWriter() {
         return items -> {
             for (List<ForeignerStore> storeListPerBankCode : items) {
-                repository.saveAll(storeListPerBankCode);
+                if(storeListPerBankCode.isEmpty()) continue;
+
+                String bankName = storeListPerBankCode.getFirst().getBankName();
+                List<ForeignerStore> existingStores = repository.findByBankName(bankName);
+
+                Map<String, ForeignerStore> existingMap = existingStores.stream()
+                        .collect(
+                                Collectors
+                                        .toMap(
+                                                ForeignerStore::getBankName,
+                                                Function.identity()
+                                        )
+                        );
+
+                List<ForeignerStore> toSave = new ArrayList<>();
+
+                for(ForeignerStore record : storeListPerBankCode) {
+                    ForeignerStore existing = existingMap.get(record.getBranchName());
+
+                    if(existing != null) {
+                        existing.rebuild()
+                                .zipCode(existing.getZipCode())
+                                .weekClose(existing.getWeekClose())
+                                .weekendClose(existing.getWeekendClose())
+                                .phoneNum(existing.getPhoneNum())
+                                .longitude(existing.getLongitude())
+                                .latitude(existing.getLatitude())
+                                .build();
+                        toSave.add(record);
+
+                        existingMap.remove(record.getBranchName());
+                    } else {
+                        toSave.add(record);
+                    }
+                }
+
+                List<ForeignerStore> toDelete = new ArrayList<>(existingMap.values());
+
+                if(!toSave.isEmpty()) {
+                    repository.saveAll(toSave);
+                }
+                if(!toDelete.isEmpty()) {
+                    repository.deleteAll(toDelete);
+                }
             }
         };
     }
