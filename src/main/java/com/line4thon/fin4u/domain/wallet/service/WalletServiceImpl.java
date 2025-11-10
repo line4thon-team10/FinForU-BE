@@ -2,7 +2,6 @@ package com.line4thon.fin4u.domain.wallet.service;
 
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
-import com.line4thon.fin4u.domain.wallet.exception.WalletErrorCode;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
 import com.line4thon.fin4u.domain.wallet.repository.CardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
@@ -19,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WalletServiceImpl implements WallerService{
+public class WalletServiceImpl implements WalletService {
 
     private final MemberRepository memberRepository;
     private final WalletRepository walletRepository;
