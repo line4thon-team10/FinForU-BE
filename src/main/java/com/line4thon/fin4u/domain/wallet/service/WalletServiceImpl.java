@@ -8,10 +8,13 @@ import com.line4thon.fin4u.domain.wallet.repository.CardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
+import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,9 +28,37 @@ public class WalletServiceImpl implements WallerService{
     private final CardRepository cardRepository;
 
     @Override
-    public Object getWalletMainPage(Long memberId) {
+    public MainWalletRes getWalletMainPage(Long memberId) {
         Wallet wallet = walletRepository.findByMemberId(memberId)
                 .orElseThrow(WalletNotFoundException::new);
+
+        List<MainWalletRes.CheckingAccounts> checks = wallet.getCheckingAccounts().stream()
+                .map(c -> new MainWalletRes.CheckingAccounts(
+                        c.getId(),
+                        c.getCheckingAccountName()
+                ))
+                .toList();
+
+        List<MainWalletRes.SavingAccounts> saves = wallet.getSavingAccounts().stream()
+                .map(s -> new MainWalletRes.SavingAccounts(
+                        s.getId(),
+                        s.getSavingName()
+                ))
+                .toList();
+
+        List<MainWalletRes.Cards> cards = wallet.getCards().stream()
+                .map(c -> new MainWalletRes.Cards(
+                        c.getId(),
+                        c.getCardName()
+                ))
+                .toList();
+
+        MainWalletRes response = new MainWalletRes(
+                wallet.getId(),
+                checks,
+                saves,
+                cards
+        );
         return null;
     }
 
