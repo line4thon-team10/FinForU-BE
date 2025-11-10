@@ -43,7 +43,8 @@ public class Card extends BaseEntity {
     @Column(name = "website")
     private String officialWebsite;
 
-    @OneToMany(mappedBy = "card")
+    @Builder.Default
+    @OneToMany(mappedBy = "card",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardBenefit> cardBenefit = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
