@@ -28,7 +28,7 @@ public class Deposit extends BaseEntity {
     private double baseInterestRate;
 
     // 최고 우대금리
-    @Column(name = "max_interest_rate")
+    @Column(name = "max_interest_rate", nullable = false)
     private double maxInterestRate;
 
     // 예치 기간
