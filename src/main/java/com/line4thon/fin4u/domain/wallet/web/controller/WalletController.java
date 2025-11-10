@@ -4,6 +4,7 @@ import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.service.WalletService;
 import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
-    @PostMapping("/add/card")
+    @PostMapping("/card")
     public ResponseEntity<SuccessResponse<?>> addCard(
             Principal principal,
             @RequestBody @Validated CardReq request
@@ -52,7 +53,19 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
-    @PutMapping("/modify/card")
+    @PostMapping("/check-account")
+    public ResponseEntity<SuccessResponse<?>> addCheckingAccount(
+            Principal principal,
+            @RequestBody @Validated CheckingAccountReq request
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank())
+            throw new RuntimeException("인증 안 됨");
+        MainWalletRes.CheckingAccounts response = walletService.addCheckingAccount(getMemberId(principal.getName()), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @PutMapping("/card")
     public ResponseEntity<SuccessResponse<?>> modifyCardDetail(
             Principal principal,
             @RequestBody @Validated CardReq request
@@ -64,5 +77,17 @@ public class WalletController {
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
 
+    }
+
+    @PutMapping("/check-account")
+    public ResponseEntity<SuccessResponse<?>> modifyCheckingAccount(
+            Principal principal,
+            @RequestBody @Validated CheckingAccountReq request
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank())
+            throw new RuntimeException("인증 안 됨");
+        MainWalletRes.CheckingAccounts response = walletService.editCheckAccountDetail(getMemberId(principal.getName()), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 }
