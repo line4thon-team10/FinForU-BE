@@ -5,7 +5,6 @@ import org.springframework.lang.Nullable;
 
 public record ComparisonSaveReq (
         Type type,
-        Long productId,
-        @Nullable String guestToken
+        Long productId
 ){
 }
