@@ -7,7 +7,6 @@ import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.CardType;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
-import com.line4thon.fin4u.domain.product.exception.InvalidProductTypeException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
 import com.line4thon.fin4u.domain.product.repository.BankRepository;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;

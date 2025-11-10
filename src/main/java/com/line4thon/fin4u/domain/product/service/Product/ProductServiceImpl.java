@@ -5,7 +5,6 @@ import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
-import com.line4thon.fin4u.domain.product.exception.InvalidProductTypeException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
@@ -94,7 +93,6 @@ public class ProductServiceImpl implements ProductService {
                         .orElseThrow(NotFoundSavingException::new);
                 savingDetail = ProductDetailRes.SavingDetailRes.fromSaving(saving);
             }
-            default -> throw new InvalidProductTypeException();
         }
 
         return new ProductDetailRes(
