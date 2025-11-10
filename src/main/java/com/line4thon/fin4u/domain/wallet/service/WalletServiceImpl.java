@@ -53,13 +53,12 @@ public class WalletServiceImpl implements WallerService{
                 ))
                 .toList();
 
-        MainWalletRes response = new MainWalletRes(
+        return new MainWalletRes(
                 wallet.getId(),
                 checks,
                 saves,
                 cards
         );
-        return null;
     }
 
     @Override
