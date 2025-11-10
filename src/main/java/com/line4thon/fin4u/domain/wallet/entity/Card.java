@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.wallet.entity;
 
+import com.line4thon.fin4u.domain.wallet.entity.enumulate.CardType;
 import com.line4thon.fin4u.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class Card extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private String cardType;
+    private CardType cardType;
 
     @Column(nullable = false)
     private String cardName;
