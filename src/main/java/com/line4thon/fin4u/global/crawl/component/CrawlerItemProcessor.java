@@ -112,7 +112,8 @@ public class CrawlerItemProcessor implements ItemProcessor<String, List<Foreigne
 //            log.info("latitude: {}", latitude);
 
             response.add(ForeignerStore.builder()
-                    .name(branch.getBankName())
+                    .bankName(branch.getBankName())
+                    .branchName(branch.getBranchName())
                     .zipCode(zipCode)
                     .weekClose(parseToTime(times.getFirst()))
                     .weekendClose(parseToTime(times.get(1)))
