@@ -6,7 +6,7 @@ import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 
 import java.util.List;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProductDetailRes (
         CardDetailRes cardDetail,
         DepositDetailRes depositDetail,
@@ -20,12 +20,13 @@ public record ProductDetailRes (
 
 
     /// 카드 상세
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CardDetailRes(
             Long id,
             String name,
             String bank,
             String description,
-            int DomesticAnnualFee,
+            int domesticAnnualFee,
             int internationalAnnualFee,
             List<CardBenefitDetail> benefits
 
@@ -45,6 +46,7 @@ public record ProductDetailRes (
     }
 
     /// 예금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositDetailRes(
             Long id,
             String name,
@@ -72,6 +74,7 @@ public record ProductDetailRes (
     }
 
     /// 적금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingDetailRes(
             Long id,
             String name,

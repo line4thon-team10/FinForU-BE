@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.product.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
@@ -9,11 +10,13 @@ import com.line4thon.fin4u.domain.product.entity.enums.BenefitCategory;
 import java.util.Collections;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProductFilterRes (
     List<CardProductRes> cards,
     List<DepositProductRes> deposits,
     List<SavingProductRes> savings
 ){
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CardProductRes(
             Long id,
             String name,
@@ -45,7 +48,7 @@ public record ProductFilterRes (
             );
         }
     }
-
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositProductRes(
             Long id,
             String name,
@@ -63,7 +66,7 @@ public record ProductFilterRes (
             );
         }
     }
-
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingProductRes(
             Long id,
             String name,
