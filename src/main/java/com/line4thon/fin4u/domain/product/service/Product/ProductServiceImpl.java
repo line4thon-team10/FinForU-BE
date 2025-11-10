@@ -71,34 +71,30 @@ public class ProductServiceImpl implements ProductService {
 
     // 상품 상세 조회
     @Override
-    public ProductDetailRes getProductDetail(String type, Long id) {
-
-        String productType = type.toLowerCase();
+    public ProductDetailRes getProductDetail(Type type, Long id) {
 
         ProductDetailRes.CardDetailRes cardDetail = null;
         ProductDetailRes.DepositDetailRes depositDetail = null;
         ProductDetailRes.SavingDetailRes savingDetail = null;
 
-        switch(productType){
-            case "card":
+        switch(type) {
+            case CARD -> {
                 Card card = cardRepo.findById(id)
                         .orElseThrow(NotFoundCardException::new);
-
                 List<ProductDetailRes.CardBenefitDetail> cardBenefits = getCardBenefitsDetail(card);
                 cardDetail = ProductDetailRes.CardDetailRes.fromCard(card, cardBenefits);
-                break;
-            case "deposit":
+            }
+            case DEPOSIT -> {
                 Deposit deposit = depositRepo.findById(id)
                         .orElseThrow(NotFoundDepositException::new);
                 depositDetail = ProductDetailRes.DepositDetailRes.fromDeposit(deposit);
-                break;
-            case "saving":
+            }
+            case SAVING -> {
                 InstallmentSaving saving = savingRepo.findById(id)
                         .orElseThrow(NotFoundSavingException::new);
                 savingDetail = ProductDetailRes.SavingDetailRes.fromSaving(saving);
-                break;
-            default:
-                throw new InvalidProductTypeException();
+            }
+            default -> throw new InvalidProductTypeException();
         }
 
         return new ProductDetailRes(

@@ -43,24 +43,12 @@ public class Deposit extends BaseEntity {
     @Column(name = "min_deposit_amount", nullable = false)
     private Integer minDepositAmount;
 
-    // 나이 자격
-    @Column(name = "min_age")
-    private Integer minAge;
-
-    // valid ID (신분증 필수 여부)
-    @Column(name = "id_required", columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean idRequired;
-
-    // 거주자 여부
-    @Column(name = "is_resident", columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean isResident;
-
     // 공식 사이트 링크
     @Column(name = "website")
     private String officialWebsite;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bank_id")
+    @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
 
 }

@@ -7,6 +7,7 @@ import com.line4thon.fin4u.domain.product.entity.Comparison;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.exception.NotFoundCardException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundDepositException;
+import com.line4thon.fin4u.domain.product.exception.NotFoundGuestTokenException;
 import com.line4thon.fin4u.domain.product.exception.NotFoundSavingException;
 import com.line4thon.fin4u.domain.product.repository.CardRepository;
 import com.line4thon.fin4u.domain.product.repository.ComparisonRepository;
@@ -34,28 +35,30 @@ public class ComparisonServiceImpl implements ComparisonService{
     //바구니 저장
     @Override
     @Transactional
-    public void saveProduct(Member member, String guestToken, Type type, Long productId) {
-
+    public void saveProduct(String email, String guestToken, Type type, Long productId) {
+        // 존재 상품인지 확인
         validateProductExists(type, productId);
 
-        if(member != null) {
-            memberRepo.findById(member.getMemberId())
-                    .orElseThrow(MemberNotFoundException::new);
-            comparisonRepo.save(Comparison.of(member, type, productId));
-        }
-        //에러처리하기
-        if(guestToken == null || guestToken.isBlank())
-            throw new RuntimeException();
+        // 회원, 비회원 검증
+        UserKey user = checkMember(email, guestToken);
 
-        comparisonRepo.save(Comparison.ofGuest(guestToken, type, productId));
+        Comparison comparison = (user.member() != null)
+                ? Comparison.of(user.member(), type, productId)
+                : Comparison.ofGuest(user.guestToken(), type, productId);
+
+        comparisonRepo.save(comparison);
+
     }
 
     // 바구니 조회&필터링
     @Override
-    public ProductFilterRes getComparisonFilter(Member member, String guestToken, ProductFilterReq filter) {
-        // 1. 바구니 조회
-        List<Comparison> products = (member != null)
-                ? comparisonRepo.findByMember(member)
+    public ProductFilterRes getComparisonFilter(String email, String guestToken, ProductFilterReq filter) {
+        // 회원, 비회원 검증
+        UserKey user = checkMember(email, guestToken);
+
+        // 1. 각 바구니
+        List<Comparison> products = (user.member() != null)
+                ? comparisonRepo.findByMember(user.member())
                 : comparisonRepo.findByGuestToken(guestToken);
 
         // 2. 타입별 분류
@@ -65,20 +68,9 @@ public class ComparisonServiceImpl implements ComparisonService{
 
         Type type = filter.type();
 
-        for(Comparison product : products){
-            // 필터 없이 전체 검색
-            if (type == null) {
+        for (Comparison product : products) {
+            if (type == null || product.getType() == type) {
                 switch (product.getType()) {
-                    case CARD -> cardIds.add(product.getProductId());
-                    case DEPOSIT -> depositIds.add(product.getProductId());
-                    case SAVING -> savingIds.add(product.getProductId());
-                }
-                continue;
-            }
-
-            // 필터 있음 → 해당 타입만 분류
-            if (product.getType() == type) {
-                switch (type) {
                     case CARD -> cardIds.add(product.getProductId());
                     case DEPOSIT -> depositIds.add(product.getProductId());
                     case SAVING -> savingIds.add(product.getProductId());
@@ -94,6 +86,24 @@ public class ComparisonServiceImpl implements ComparisonService{
         );
     }
 
+    private record UserKey(Member member, String guestToken) {}
+
+    // 회원, 비회원 검증
+    private UserKey checkMember(String email, String guestToken){
+        if(email != null) {
+            Member member =  memberRepo.findByEmail(email)
+                    .orElseThrow(MemberNotFoundException::new);
+            return new UserKey(member, null);
+        }
+
+        if(guestToken != null && !guestToken.isBlank())
+            return new UserKey(null, guestToken);
+
+        throw new NotFoundGuestTokenException();
+    }
+
+
+    // 상품 존재 확인
     private void validateProductExists(Type type, Long productId) {
         switch (type) {
             case CARD -> cardRepo.findById(productId).orElseThrow(NotFoundCardException::new);

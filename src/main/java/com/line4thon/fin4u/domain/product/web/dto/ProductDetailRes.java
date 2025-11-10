@@ -6,7 +6,7 @@ import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 
 import java.util.List;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProductDetailRes (
         CardDetailRes cardDetail,
         DepositDetailRes depositDetail,
@@ -17,33 +17,22 @@ public record ProductDetailRes (
             String category,
             String description
     ) {}
-    // 자격 조건
-    public record Eligibility(
-            Integer age,
-            boolean validId,
-            boolean resident
-    ){}
 
 
     /// 카드 상세
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CardDetailRes(
             Long id,
             String name,
             String bank,
             String description,
-            int DomesticAnnualFee,
+            int domesticAnnualFee,
             int internationalAnnualFee,
-            Eligibility eligibility,
             List<CardBenefitDetail> benefits
 
     ){
         public static CardDetailRes fromCard(Card card, List<CardBenefitDetail> benefits) {
 
-            Eligibility eligibilityDto = new Eligibility(
-                    card.getMinAge(),
-                    card.getIdRequired(),
-                    card.getIsResident()
-            );
             return new CardDetailRes(
                     card.getId(),
                     card.getName(),
@@ -51,13 +40,13 @@ public record ProductDetailRes (
                     card.getDescription(),
                     card.getDomesticAnnualFee(),
                     card.getInternationalAnnualFee(),
-                    eligibilityDto,
                     benefits
             );
         }
     }
 
     /// 예금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositDetailRes(
             Long id,
             String name,
@@ -67,16 +56,9 @@ public record ProductDetailRes (
             Double maxRate,
             Integer termMonths,
             Boolean isFlexible,
-            Integer minDepositAmount,
-            Eligibility eligibility
+            Integer minDepositAmount
     ){
         public static DepositDetailRes fromDeposit(Deposit deposit) {
-
-            Eligibility eligibilityDto = new Eligibility(
-                    deposit.getMinAge(),
-                    deposit.getIdRequired(),
-                    deposit.getIsResident()
-            );
             return new DepositDetailRes(
                     deposit.getId(),
                     deposit.getName(),
@@ -86,13 +68,13 @@ public record ProductDetailRes (
                     deposit.getMaxInterestRate(),
                     deposit.getDepositTerm(),
                     deposit.getIsFlexible(),
-                    deposit.getMinDepositAmount(),
-                    eligibilityDto
+                    deposit.getMinDepositAmount()
             );
         }
     }
 
     /// 적금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingDetailRes(
             Long id,
             String name,
@@ -102,16 +84,10 @@ public record ProductDetailRes (
             Double maxRate,
             Integer termMonths,
             Boolean isFlexible,
-            Integer maxMonthly,
-            Eligibility eligibility
+            Integer maxMonthly
     ){
         public static SavingDetailRes fromSaving(InstallmentSaving saving) {
 
-            Eligibility eligibilityDto = new Eligibility(
-                    saving.getMinAge(),
-                    saving.getIdRequired(),
-                    saving.getIsResident()
-            );
             return new SavingDetailRes(
                     saving.getId(),
                     saving.getName(),
@@ -121,8 +97,7 @@ public record ProductDetailRes (
                     saving.getMaxInterestRate(),
                     saving.getSavingTerm(),
                     saving.getIsFlexible(),
-                    saving.getMaxMonthly(),
-                    eligibilityDto
+                    saving.getMaxMonthly()
             );
         }
     }

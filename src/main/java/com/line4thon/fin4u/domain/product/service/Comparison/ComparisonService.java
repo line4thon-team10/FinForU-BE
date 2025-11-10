@@ -6,7 +6,7 @@ import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 
 public interface ComparisonService {
-    void saveProduct(Member member, String token, Type type, Long productId);
+    void saveProduct(String email, String token, Type type, Long productId);
 
-    ProductFilterRes getComparisonFilter(Member member, String guestToken, ProductFilterReq req);
+    ProductFilterRes getComparisonFilter(String email, String guestToken, ProductFilterReq req);
 }

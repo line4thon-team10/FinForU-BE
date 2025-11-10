@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.product.web.controller;
 
+import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.service.Product.ProductServiceImpl;
 import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
@@ -30,7 +31,7 @@ public class ProductController {
     // 상품 상세 조회
     @GetMapping("/{type}/{id}")
     public ResponseEntity<SuccessResponse<?>> getProductDetail(
-            @PathVariable("type") String type,
+            @PathVariable("type") Type type,
             @PathVariable("id") Long id
     ){
         ProductDetailRes res = productService.getProductDetail(type, id);
