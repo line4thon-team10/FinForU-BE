@@ -277,7 +277,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         Long cardId = cardA.getId();
 
         // When
-        ProductDetailRes result = productService.getProductDetail("card", cardId);
+        ProductDetailRes result = productService.getProductDetail(Type.CARD, cardId);
 
         // Then
         assertThat(result).isNotNull();
@@ -301,7 +301,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         Long depositId = depositA.getId();
 
         // When
-        ProductDetailRes result = productService.getProductDetail("deposit", depositId);
+        ProductDetailRes result = productService.getProductDetail(Type.DEPOSIT, depositId);
 
         // Then
         assertThat(result).isNotNull();
@@ -324,7 +324,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         Long savingId = savingA.getId();
 
         // When
-        ProductDetailRes result = productService.getProductDetail("saving", savingId);
+        ProductDetailRes result = productService.getProductDetail(Type.SAVING, savingId);
 
         // Then
         assertThat(result).isNotNull();
@@ -353,24 +353,10 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
         Long nonExistentId = 9999L;
 
         // When & Then
-        assertThatThrownBy(() -> productService.getProductDetail("saving", nonExistentId))
+        assertThatThrownBy(() -> productService.getProductDetail(Type.SAVING, nonExistentId))
                 .isInstanceOf(NotFoundSavingException.class)
         // 에러 메시지 검증 (NotFoundSavingException에 메시지가 있다면 검증)
         // .hasMessageContaining("해당 적금 상품을 찾을 수 없습니다.");
-        ;
-    }
-
-    @DisplayName("상세 조회 예외: 유효하지 않은 상품 타입 요청 시 InvalidProductTypeException이 발생한다.")
-    @Test
-    void getProductDetail_InvalidType_ThrowsException() {
-        // Given
-        String invalidType = "loan";
-        Long validId = cardA.getId();
-
-        // When & Then
-        assertThatThrownBy(() -> productService.getProductDetail(invalidType, validId))
-                .isInstanceOf(InvalidProductTypeException.class)
-        // .hasMessageContaining("유효하지 않은 상품 타입입니다.");
         ;
     }
 }

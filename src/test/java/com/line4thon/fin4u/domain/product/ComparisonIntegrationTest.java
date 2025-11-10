@@ -3,16 +3,10 @@ package com.line4thon.fin4u.domain.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.line4thon.fin4u.domain.member.entity.Member;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
-import com.line4thon.fin4u.domain.product.entity.Card;
-import com.line4thon.fin4u.domain.product.entity.Comparison;
-import com.line4thon.fin4u.domain.product.entity.Deposit;
-import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
+import com.line4thon.fin4u.domain.product.entity.*;
 import com.line4thon.fin4u.domain.product.entity.enums.CardType;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
-import com.line4thon.fin4u.domain.product.repository.CardRepository;
-import com.line4thon.fin4u.domain.product.repository.ComparisonRepository;
-import com.line4thon.fin4u.domain.product.repository.DepositRepository;
-import com.line4thon.fin4u.domain.product.repository.InstallmentSavingRepository;
+import com.line4thon.fin4u.domain.product.repository.*;
 import com.line4thon.fin4u.domain.product.web.dto.ComparisonSaveReq;
 import com.line4thon.fin4u.support.IntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +25,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static com.line4thon.fin4u.domain.member.entity.Member.Language.ENGLISH;
-import static com.line4thon.fin4u.domain.member.entity.Member.VisaType.ACCOUNT_OPEN;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,14 +46,27 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
     @Autowired DepositRepository depositRepository;
     @Autowired InstallmentSavingRepository savingRepository;
     @Autowired ComparisonRepository comparisonRepository;
+    @Autowired BankRepository bankRepository;
 
     Member member;
     Card cardA;
     Deposit depositA;
     InstallmentSaving savingA;
+    Bank greenTreeBank;
+    Bank sunnyBank;
+
+
 
     @BeforeEach
     void setUp() {
+
+        greenTreeBank = bankRepository.save(Bank.builder()
+                .bankName("GreenTree Bank")
+                .build());
+
+        sunnyBank = bankRepository.save(Bank.builder()
+                .bankName("Sunny Bank")
+                .build());
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .password("pw")
@@ -75,6 +80,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
 
         cardA = cardRepository.save(Card.builder()
                 .name("무지출카드")
+                .bank(greenTreeBank)
                 .description("카드 A 설명")
                 .cardType(CardType.CHECK)
                 .domesticAnnualFee(0)
@@ -82,13 +88,16 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
 
         depositA = depositRepository.save(Deposit.builder()
                 .name("일반예금")
+                .bank(sunnyBank)
                 .description("예금 A 설명")
                 .minDepositAmount(2)
                 .maxInterestRate(3.2)
                 .depositTerm(12)
                 .build());
+
         savingA = savingRepository.save(InstallmentSaving.builder()
                 .name("청년적금")
+                .bank(sunnyBank)
                 .description("적금 A 설명")
                 .maxInterestRate(4.1)
                 .savingTerm(24)
@@ -98,10 +107,10 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
     @Test
     @DisplayName("바구니 저장 API 정상 호출")
     void saveProduct_success() throws Exception {
-        ComparisonSaveReq req = new ComparisonSaveReq(Type.CARD, cardA.getId(), null);
+        ComparisonSaveReq req = new ComparisonSaveReq(Type.CARD, cardA.getId());
 
         mockMvc.perform(post("/products/comparison")
-                        .with(user(member.getEmail()).roles("USER"))
+                        .with(user(member.getEmail()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
@@ -120,7 +129,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         comparisonRepository.save(Comparison.of(member, Type.SAVING, savingA.getId()));
 
         mockMvc.perform(get("/products/comparison")
-                .with(user(member.getEmail()).roles("USER")))
+                .with(user(member.getEmail())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
                 .andExpect(jsonPath("$.data.deposits.length()").value(1))
@@ -135,7 +144,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         comparisonRepository.save(Comparison.of(member, Type.SAVING, savingA.getId()));
 
         mockMvc.perform(get("/products/comparison")
-                        .with(user(member.getEmail()).roles("USER"))
+                        .with(user(member.getEmail()))
                         .param("type", "CARD")) // QueryParam 로 전달
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
