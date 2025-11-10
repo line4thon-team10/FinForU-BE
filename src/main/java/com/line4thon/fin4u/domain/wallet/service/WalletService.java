@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.wallet.service;
 
+import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 
 public interface WalletService {
@@ -8,14 +9,14 @@ public interface WalletService {
     MainWalletRes getWalletMainPage(Long memberId);
 
     // ADD
-    Object addCheckingAccount(Long memberId);
-    Object addSavingAccount(Long memberId);
-    Object addCard(Long memberId);
+    Void addCheckingAccount(Long memberId);
+    Void addSavingAccount(Long memberId);
+    MainWalletRes.Cards addCard(Long memberId, CardReq request);
 
     // EDIT
-    Object editCheckAccountDetail(Long memberId);
-    Object editCardDetail(Long memberId);
-    Object editSavingAccountDetail(Long memberId);
+    Void editCheckAccountDetail(Long memberId);
+    MainWalletRes.Cards editCardDetail(Long memberId, CardReq request);
+    Void editSavingAccountDetail(Long memberId);
 
     // DELETE
     Void deleteCheckAccount(Long memberId);

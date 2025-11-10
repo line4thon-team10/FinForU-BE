@@ -1,19 +1,25 @@
 package com.line4thon.fin4u.domain.wallet.service;
 
+import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
+import com.line4thon.fin4u.domain.wallet.entity.WalletCard;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
 import com.line4thon.fin4u.domain.wallet.repository.WalletCardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
+import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,7 +34,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public MainWalletRes getWalletMainPage(Long memberId) {
-        Wallet wallet = walletRepository.findByMemberId(memberId)
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
                 .orElseThrow(WalletNotFoundException::new);
 
         List<MainWalletRes.CheckingAccounts> checks = wallet.getCheckingAccounts().stream()
@@ -62,37 +68,75 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public Object addCheckingAccount(Long memberId) {
+    public Void addCheckingAccount(Long memberId) {
         return null;
     }
 
     @Override
     @Transactional
-    public Object addSavingAccount(Long memberId) {
+    public Void addSavingAccount(Long memberId) {
         return null;
     }
 
     @Override
     @Transactional
-    public Object addCard(Long memberId) {
+    public MainWalletRes.Cards addCard(Long memberId, CardReq request) {
+
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseGet(() ->
+                        walletRepository.save(
+                                Wallet.builder()
+                                        .member(memberRepository.findByMemberId(memberId)
+                                                .orElseThrow(MemberNotFoundException::new))
+                                        .build()
+                        )
+                );
+        WalletCard card = WalletCard.builder()
+                .bank(request.getBank())
+                .wallet(wallet)
+                .cardType(request.getCardType())
+                .cardName(request.getCardName())
+                .paymentDate(request.getUpcomingDate() == null ? null : request.getUpcomingDate().getDayOfMonth())
+                .build();
+        cardRepository.save(card);
+
+        return new MainWalletRes.Cards(
+                card.getId(),
+                card.getCardName()
+        );
+    }
+
+    @Override
+    @Transactional
+    public Void editCheckAccountDetail(Long memberId) {
         return null;
     }
 
     @Override
     @Transactional
-    public Object editCheckAccountDetail(Long memberId) {
-        return null;
+    public MainWalletRes.Cards editCardDetail(Long memberId, CardReq request) {
+        List<WalletCard> cards = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(WalletNotFoundException::new)
+                .getCards();
+        Map<Long, WalletCard> cardMap = cards.stream().collect(Collectors.toMap(WalletCard::getId, c -> c));
+        WalletCard foundCard = cardMap.get(request.getCardId());
+
+        foundCard.modify()
+                .cardType(request.getCardType())
+                .bank(request.getBank())
+                .cardName(request.getCardName())
+                .paymentDate(request.getUpcomingDate().getDayOfMonth())
+                .build();
+
+        return new MainWalletRes.Cards(
+                foundCard.getId(),
+                foundCard.getCardName()
+        );
     }
 
     @Override
     @Transactional
-    public Object editCardDetail(Long memberId) {
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public Object editSavingAccountDetail(Long memberId) {
+    public Void editSavingAccountDetail(Long memberId) {
         return null;
     }
 
