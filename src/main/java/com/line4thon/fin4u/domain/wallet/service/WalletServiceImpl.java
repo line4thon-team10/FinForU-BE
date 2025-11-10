@@ -1,6 +1,9 @@
 package com.line4thon.fin4u.domain.wallet.service;
 
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
+import com.line4thon.fin4u.domain.wallet.entity.Wallet;
+import com.line4thon.fin4u.domain.wallet.exception.WalletErrorCode;
+import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
 import com.line4thon.fin4u.domain.wallet.repository.CardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
@@ -23,7 +26,8 @@ public class WalletServiceImpl implements WallerService{
 
     @Override
     public Object getWalletMainPage(Long memberId) {
-
+        Wallet wallet = walletRepository.findByMemberId(memberId)
+                .orElseThrow(WalletNotFoundException::new);
         return null;
     }
 
