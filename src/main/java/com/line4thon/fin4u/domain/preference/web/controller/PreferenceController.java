@@ -21,7 +21,7 @@ public class PreferenceController {
 
     private final PreferServiceImpl preferService;
 
-    // 저장
+    // 저장&수정
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> savePrefer(
             Principal principal,
