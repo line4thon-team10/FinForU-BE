@@ -3,14 +3,14 @@ package com.line4thon.fin4u.domain.wallet.web.controller;
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.service.WalletService;
+import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -38,5 +38,31 @@ public class WalletController {
         MainWalletRes response = walletService.getWalletMainPage(getMemberId(principal.getName()));
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @PostMapping("/add/card")
+    public ResponseEntity<SuccessResponse<?>> addCard(
+            Principal principal,
+            @RequestBody @Validated CardReq request
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new RuntimeException("인증 안 됨");
+        }
+        MainWalletRes.Cards response = walletService.addCard(getMemberId(principal.getName()), request);
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @PutMapping("/modify/card")
+    public ResponseEntity<SuccessResponse<?>> modifyCardDetail(
+            Principal principal,
+            @RequestBody @Validated CardReq request
+    ) {
+        if (principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new RuntimeException("인증 안 됨");
+        }
+        MainWalletRes.Cards response = walletService.editCardDetail(getMemberId(principal.getName()), request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+
     }
 }
