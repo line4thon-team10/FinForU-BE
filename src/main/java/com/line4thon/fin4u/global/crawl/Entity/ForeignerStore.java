@@ -23,6 +23,7 @@ public class ForeignerStore extends BaseEntity {
 
     private String bankName;
     private String branchName;
+    private String roadAddress;
     private String zipCode;
     private LocalTime weekClose;
     private LocalTime weekendClose;
@@ -32,12 +33,14 @@ public class ForeignerStore extends BaseEntity {
 
     @Builder(builderMethodName = "rebuild")
     public void build(
+            String roadAddress,
             String zipCode,
             LocalTime weekClose,
             LocalTime weekendClose,
             String phoneNum,
             Double longitude,
             Double latitude) {
+        this.roadAddress = roadAddress;
         this.zipCode = zipCode;
         this.weekClose = weekClose;
         this.weekendClose = weekendClose;
