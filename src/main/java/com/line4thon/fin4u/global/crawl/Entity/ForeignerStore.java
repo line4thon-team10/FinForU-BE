@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -23,7 +23,8 @@ public class ForeignerStore extends BaseEntity {
 
     private String name;
     private String zipCode;
-    private LocalDateTime closeTime;
+    private LocalTime weekClose;
+    private LocalTime weekendClose;
     private String phoneNum;
     private Double longitude;
     private Double latitude;
