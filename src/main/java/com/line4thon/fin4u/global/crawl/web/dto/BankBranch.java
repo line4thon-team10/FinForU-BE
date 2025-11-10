@@ -1,4 +1,4 @@
-package com.line4thon.fin4u.global.crawl.dto;
+package com.line4thon.fin4u.global.crawl.web.dto;
 
 import lombok.*;
 
