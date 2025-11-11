@@ -27,7 +27,7 @@ public class InstallmentSaving extends BaseEntity {
     private double baseInterestRate;
 
     // 우대금리
-    @Column(name = "max_interest_rate")
+    @Column(name = "max_interest_rate", nullable = false)
     private double maxInterestRate;
 
     // 가입 기간

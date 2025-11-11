@@ -7,7 +7,7 @@ import com.line4thon.fin4u.domain.product.entity.*;
 import com.line4thon.fin4u.domain.product.entity.enums.CardType;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.repository.*;
-import com.line4thon.fin4u.domain.product.web.dto.ComparisonSaveReq;
+import com.line4thon.fin4u.domain.product.web.dto.CompareSaveReq;
 import com.line4thon.fin4u.support.IntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -107,7 +107,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
     @Test
     @DisplayName("바구니 저장 API 정상 호출")
     void saveProduct_success() throws Exception {
-        ComparisonSaveReq req = new ComparisonSaveReq(Type.CARD, cardA.getId());
+        CompareSaveReq req = new CompareSaveReq(Type.CARD, cardA.getId());
 
         mockMvc.perform(post("/products/comparison")
                         .with(user(member.getEmail()))

@@ -33,21 +33,18 @@ public class Card extends BaseEntity {
     private CardType cardType;
 
     // 연회비
-    @Column(name = "domestic_annual_fee")
+    @Column(name = "domestic_annual_fee", nullable = false)
     private int domesticAnnualFee;
 
     @Column(name = "international_annual_fee")
     private int internationalAnnualFee;
 
-    // 나이 자격
-    @Column(name = "min_age")
-    private Integer minAge;
-
     // 공식 사이트 링크
     @Column(name = "website")
     private String officialWebsite;
 
-    @OneToMany(mappedBy = "card")
+    @Builder.Default
+    @OneToMany(mappedBy = "card",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardBenefit> cardBenefit = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

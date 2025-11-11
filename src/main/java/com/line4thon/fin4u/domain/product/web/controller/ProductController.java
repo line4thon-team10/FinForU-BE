@@ -31,8 +31,8 @@ public class ProductController {
     // 상품 상세 조회
     @GetMapping("/{type}/{id}")
     public ResponseEntity<SuccessResponse<?>> getProductDetail(
-            @PathVariable("type") Type type,
-            @PathVariable("id") Long id
+            @PathVariable(value = "type", required = true) Type type,
+            @PathVariable(value = "id", required = true) Long id
     ){
         ProductDetailRes res = productService.getProductDetail(type, id);
         return ResponseEntity.status(

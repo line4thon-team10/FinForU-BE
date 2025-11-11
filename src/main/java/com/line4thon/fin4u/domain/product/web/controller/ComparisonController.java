@@ -1,8 +1,10 @@
 package com.line4thon.fin4u.domain.product.web.controller;
 
 import com.line4thon.fin4u.domain.member.entity.Member;
+import com.line4thon.fin4u.domain.product.entity.enums.Type;
 import com.line4thon.fin4u.domain.product.service.Comparison.ComparisonServiceImpl;
-import com.line4thon.fin4u.domain.product.web.dto.ComparisonSaveReq;
+import com.line4thon.fin4u.domain.product.web.dto.CompareRes;
+import com.line4thon.fin4u.domain.product.web.dto.CompareSaveReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import com.line4thon.fin4u.global.response.SuccessResponse;
@@ -11,11 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,10 +31,9 @@ public class ComparisonController {
     public ResponseEntity<SuccessResponse<?>> saveProducts(
             Principal principal,
             @RequestParam(required = false) String guestToken,
-            @RequestBody ComparisonSaveReq req
+            @Valid @RequestBody CompareSaveReq req
             ){
-        String email = (principal != null) ? principal.getName() : null;
-        comparisonService.saveProduct(email, guestToken, req.type(), req.productId());
+        comparisonService.saveProduct(principal, guestToken, req.type(), req.productId());
 
         return ResponseEntity.status(
                 HttpStatus.CREATED).body(SuccessResponse.created("저장완료"));
@@ -46,10 +46,20 @@ public class ComparisonController {
             @RequestParam(required = false) String guestToken,
             @Valid @ModelAttribute ProductFilterReq req
     ){
-        String email = (principal != null) ? principal.getName() : null;
+        ProductFilterRes res = comparisonService.getComparisonFilter(principal, guestToken, req);
 
-        ProductFilterRes res = comparisonService.getComparisonFilter(email, guestToken, req);
+        return ResponseEntity.status(
+                HttpStatus.OK).body(SuccessResponse.ok(res));
+    }
 
+    //상품비교
+    @GetMapping("/details")
+    public ResponseEntity<SuccessResponse<?>> comparing(
+            @RequestParam(value = "type", required = true) Type type,
+            @RequestParam(value = "productIds", required = true)List<Long> productIds
+    ){
+
+        CompareRes res = comparisonService.compare(productIds, type);
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }

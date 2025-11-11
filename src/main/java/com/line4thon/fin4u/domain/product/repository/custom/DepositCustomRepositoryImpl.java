@@ -1,6 +1,7 @@
 package com.line4thon.fin4u.domain.product.repository.custom;
 
 import com.line4thon.fin4u.domain.product.entity.Deposit;
+import com.line4thon.fin4u.domain.product.entity.QInstallmentSaving;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -77,29 +78,47 @@ public class DepositCustomRepositoryImpl implements DepositCustomRepository {
     private BooleanExpression bankEq(String bankName){
         if(bankName == null)
             return null;
-        return QBank.bank.bankName.equalsIgnoreCase(bankName);
+        return QBank.bank.bankName.lower().eq(bankName.toLowerCase());
     }
 
     // 금리 (우대 금리 기준)
+    // 금리 (우대 금리 기준)
     private BooleanExpression rateBetween(Double minRate, Double maxRate){
-        if (minRate == null || maxRate == null)
-            return null;
+        //조건이 없을 경우 항상 참
+        BooleanExpression expr = Expressions.asBoolean(true).isTrue();
 
-        return QDeposit.deposit.maxInterestRate.between(minRate, maxRate);
+        // loe : 작거나 같을때
+        if (maxRate != null) {
+            expr = expr.and(QDeposit.deposit.maxInterestRate.loe(maxRate));
+        }
+
+        // goe : 크거나 같을때
+        if (minRate != null) {
+            expr = expr.and(QDeposit.deposit.maxInterestRate.goe(minRate));
+        }
+
+        return expr;
     }
 
-    // 기간 (구체적 기간 + 유욘한 기간 조건이 2가지)
+    // 기간 (구체적 기간 + 유연한 기간 조건이 2가지)
     private BooleanExpression termBetween(Integer maxTermMonths) {
+        //조건이 없을 경우 항상 참
+        BooleanExpression expr = Expressions.asBoolean(true).isTrue();
+
         if (maxTermMonths == null)
-            return null;
-        // 고정 기간 검색 조건 (예시: 12개월 이하)
-        BooleanExpression fixedTermCondition = QDeposit.deposit.depositTerm.loe(maxTermMonths);
+            return expr;
 
-        // 유연 기간 포함 조건 (isFlexible이 true인 상품은 무조건 포함)
-        BooleanExpression flexibleCondition = QDeposit.deposit.isFlexible.isTrue();
+        // 3년 이상일때 + 유연한 기간
+        if (maxTermMonths == -1) {
+            return expr.and(
+                    QDeposit.deposit.depositTerm.goe(36)
+                            .or(QDeposit.deposit.isFlexible.isTrue()));
+        }
 
-        // 두 조건을 OR로 연결하여 반환: 고정 기간에 맞거나, 유연한 상품이거나
-        return fixedTermCondition.or(flexibleCondition);
+        // 1년이하 / 3년 이하 + 유연한 기간
+        return expr.and(
+                QDeposit.deposit.depositTerm.loe(maxTermMonths)
+                        .or(QDeposit.deposit.isFlexible.isTrue()));
     }
 
 }
