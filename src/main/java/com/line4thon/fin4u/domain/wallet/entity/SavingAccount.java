@@ -37,7 +37,6 @@ public class SavingAccount extends BaseEntity {
     @Column(nullable = false)
     private String savingName;
 
-    @Column(nullable = false)
     private Integer monthlyPay;
 
     private Integer paymentDate;
