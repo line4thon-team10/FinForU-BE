@@ -127,7 +127,7 @@ public class WalletServiceImpl implements WalletService {
         savingAccountRepository.save(account);
         return new MainWalletRes.SavingAccounts(
                 account.getId(),
-                account.getBank().getLower()
+                account.getSavingName()
         );
     }
 
