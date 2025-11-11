@@ -139,7 +139,7 @@ public class WalletController {
             @PathVariable @NotNull Long savingAccountId
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
-        walletService.deleteCard(getMemberId(principal.getName()), savingAccountId);
+        walletService.deleteSavingAccount(getMemberId(principal.getName()), savingAccountId);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
 }
