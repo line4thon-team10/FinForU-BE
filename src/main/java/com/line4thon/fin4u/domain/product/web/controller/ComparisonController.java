@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 @RestController
@@ -44,9 +45,11 @@ public class ComparisonController {
     public ResponseEntity<SuccessResponse<?>> getProductsList(
             Principal principal,
             @RequestParam(required = false) String guestToken,
-            @Valid @ModelAttribute ProductFilterReq req
+            @Valid @ModelAttribute ProductFilterReq req,
+            Locale locale
     ){
-        ProductFilterRes res = comparisonService.getComparisonFilter(principal, guestToken, req);
+        String langCode = locale.getLanguage();
+        ProductFilterRes res = comparisonService.getComparisonFilter(principal, guestToken, req, langCode);
 
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
@@ -56,10 +59,13 @@ public class ComparisonController {
     @GetMapping("/details")
     public ResponseEntity<SuccessResponse<?>> comparing(
             @RequestParam(value = "type", required = true) Type type,
-            @RequestParam(value = "productIds", required = true)List<Long> productIds
+            @RequestParam(value = "productIds", required = true)List<Long> productIds,
+            Locale locale
     ){
 
-        CompareRes res = comparisonService.compare(productIds, type);
+        String langCode = locale.getLanguage();
+
+        CompareRes res = comparisonService.compare(productIds, type, langCode);
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }

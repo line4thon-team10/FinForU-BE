@@ -16,6 +16,7 @@ public class Bank extends BaseEntity {
     @Column(name = "bank_id")
     private Long id;
 
+    //영어만
     @Column(name = "bank_name", nullable = false, unique = true)
     private String bankName;
 }

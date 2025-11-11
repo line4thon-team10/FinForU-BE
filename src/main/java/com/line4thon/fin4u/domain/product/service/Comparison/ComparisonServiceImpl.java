@@ -19,6 +19,7 @@ import com.line4thon.fin4u.domain.product.repository.InstallmentSavingRepository
 import com.line4thon.fin4u.domain.product.web.dto.CompareRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
+import com.line4thon.fin4u.global.util.BankNameTranslator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ComparisonServiceImpl implements ComparisonService{
+
+    private final BankNameTranslator bankNameTranslator;
 
     private final MemberRepository memberRepo;
     private final CardRepository cardRepo;
@@ -58,7 +61,7 @@ public class ComparisonServiceImpl implements ComparisonService{
 
     // 바구니 조회&필터링
     @Override
-    public ProductFilterRes getComparisonFilter(Principal principal, String guestToken, ProductFilterReq filter) {
+    public ProductFilterRes getComparisonFilter(Principal principal, String guestToken, ProductFilterReq filter, String langCode) {
         // 회원, 비회원 검증
         UserKey user = checkMember(principal, guestToken);
 
@@ -86,27 +89,27 @@ public class ComparisonServiceImpl implements ComparisonService{
 
         // 3. 필터
         return new ProductFilterRes(
-                searchCards(filter, cardIds),
-                searchDeposits(filter, depositIds),
-                searchSavings(filter, savingIds)
+                searchCards(filter, cardIds, langCode),
+                searchDeposits(filter, depositIds,  langCode),
+                searchSavings(filter, savingIds, langCode)
         );
     }
 
     // 상품 비교
     @Override
-    public CompareRes compare(List<Long> productIds, Type type) {
+    public CompareRes compare(List<Long> productIds, Type type, String langCode) {
         // 상품 검증
         productIds.forEach(id -> validateProductExists(type, id));
 
         return switch(type){
-            case CARD -> compareCard(productIds);
-            case DEPOSIT -> compareDeposit(productIds);
-            case SAVING -> compareSaving(productIds);
+            case CARD -> compareCard(productIds, langCode);
+            case DEPOSIT -> compareDeposit(productIds,langCode);
+            case SAVING -> compareSaving(productIds,langCode);
         };
     }
 
     // 카드 비교
-    private CompareRes compareCard(List<Long> productIds) {
+    private CompareRes compareCard(List<Long> productIds, String langCode) {
 
         List<Card> cards = cardRepo.findAllById(productIds);
 
@@ -128,7 +131,7 @@ public class ComparisonServiceImpl implements ComparisonService{
 
         // 반환
         List<CompareRes.CardCompareRes> result = cards.stream()
-                .map(CompareRes.CardCompareRes::fromCard)
+                .map(card -> CompareRes.CardCompareRes.fromCard(card, langCode, bankNameTranslator))
                 .toList();
 
         CompareRes.Highlights highlight = CompareRes.cardHighlight(lowestDomesticId, lowestInternationalId);
@@ -140,7 +143,7 @@ public class ComparisonServiceImpl implements ComparisonService{
     }
 
     // 예금 비교
-    private CompareRes compareDeposit(List<Long> productIds) {
+    private CompareRes compareDeposit(List<Long> productIds, String langCode) {
 
         List<Deposit> deposits= depositRepo.findAllById(productIds);
 
@@ -167,7 +170,7 @@ public class ComparisonServiceImpl implements ComparisonService{
 
         //반환
         List<CompareRes.DepositCompareRes> result = deposits.stream()
-                        .map(CompareRes.DepositCompareRes::fromDeposit)
+                .map(deposit -> CompareRes.DepositCompareRes.fromDeposit(deposit, langCode, bankNameTranslator))
                         .toList();
 
         CompareRes.Highlights highlight= CompareRes.depositHighlight(bestBaseRateId, bestMaxRateId, lowestMinDepositId);
@@ -180,7 +183,7 @@ public class ComparisonServiceImpl implements ComparisonService{
     }
 
     // 적금 비교
-    private CompareRes compareSaving(List<Long> productIds) {
+    private CompareRes compareSaving(List<Long> productIds, String langCode) {
 
         List<InstallmentSaving> savings = savingRepo.findAllById(productIds);
 
@@ -207,7 +210,7 @@ public class ComparisonServiceImpl implements ComparisonService{
 
         //반환
         List<CompareRes.SavingCompareRes> result = savings.stream()
-                .map(CompareRes.SavingCompareRes::fromSaving)
+                .map(saving -> CompareRes.SavingCompareRes.fromSaving(saving, langCode, bankNameTranslator))
                 .toList();
 
         CompareRes.Highlights highlight = CompareRes.savingHighlight(bestBaseRateId, bestMaxRateId, lowestMaxMonthly);
@@ -249,23 +252,23 @@ public class ComparisonServiceImpl implements ComparisonService{
     }
 
     // 카드 상품 필터링 검색
-    private List<ProductFilterRes.CardProductRes> searchCards(ProductFilterReq filter, List<Long> cardIds) {
+    private List<ProductFilterRes.CardProductRes> searchCards(ProductFilterReq filter, List<Long> cardIds, String langCode) {
         return cardRepo.searchProducts(filter, cardIds).stream()
-                .map(ProductFilterRes.CardProductRes::fromCard)
+                .map(card -> ProductFilterRes.CardProductRes.fromCard(card, langCode,bankNameTranslator ))
                 .toList();
     }
 
     // 예금 상품 필터링 검색
-    private List<ProductFilterRes.DepositProductRes> searchDeposits(ProductFilterReq filter, List<Long> depositIds) {
+    private List<ProductFilterRes.DepositProductRes> searchDeposits(ProductFilterReq filter, List<Long> depositIds, String langCode) {
         return depositRepo.searchProducts(filter, depositIds).stream()
-                .map(ProductFilterRes.DepositProductRes::fromDeposit)
+                .map(deposit -> ProductFilterRes.DepositProductRes.fromDeposit(deposit, langCode, bankNameTranslator))
                 .toList();
     }
 
     // 적금 상품 필터링 검색
-    private List<ProductFilterRes.SavingProductRes> searchSavings(ProductFilterReq filter, List<Long> savingIds){
+    private List<ProductFilterRes.SavingProductRes> searchSavings(ProductFilterReq filter, List<Long> savingIds, String langCode){
         return savingRepo.searchProducts(filter, savingIds).stream()
-                .map(ProductFilterRes.SavingProductRes::fromSaving)
+                .map(saving -> ProductFilterRes.SavingProductRes.fromSaving(saving, langCode, bankNameTranslator))
                 .toList();
     }
 }

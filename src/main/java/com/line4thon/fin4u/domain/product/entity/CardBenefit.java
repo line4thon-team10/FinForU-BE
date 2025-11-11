@@ -21,11 +21,25 @@ public class CardBenefit extends BaseEntity {
     @Column(name = "category")
     private BenefitCategory  benefitCategory;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "description_en")
+    private String descriptionEn;
+
+    @Column(name = "description_zh")
+    private String descriptionZh;
+
+    @Column(name = "description_vi")
+    private String descriptionVi;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;
+
+    public String getDescriptionByLang(String langCode) {
+        return switch (langCode.toLowerCase()) {
+            case "zh" -> this.descriptionZh;
+            case "vi" -> this.descriptionVi;
+            default -> this.descriptionEn;
+        };
+    }
 
 }

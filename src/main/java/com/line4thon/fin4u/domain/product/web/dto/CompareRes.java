@@ -5,6 +5,7 @@ import com.line4thon.fin4u.domain.product.entity.Card;
 import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
+import com.line4thon.fin4u.global.util.BankNameTranslator;
 
 import java.util.List;
 
@@ -69,15 +70,17 @@ public record CompareRes(
             List<String> benefit,
             String website
     ) {
-        public static CardCompareRes fromCard(Card card) {
+        public static CardCompareRes fromCard(Card card, String langCode, BankNameTranslator translator) {
+            String translatedBank = translator.translate(card.getBank().getBankName(), langCode);
+
             List<String> benefits = card.getCardBenefit().stream()
-                    .map(CardBenefit::getDescription)
+                    .map(benefit -> benefit.getDescriptionByLang(langCode))
                     .toList();
 
             return new CardCompareRes(
                     card.getId(),
-                    card.getName(),
-                    card.getBank().getBankName(),
+                    card.getNameByLang(langCode),
+                    translatedBank,
                     card.getDomesticAnnualFee(),
                     card.getInternationalAnnualFee(),
                     benefits,
@@ -98,11 +101,13 @@ public record CompareRes(
             Integer minDepositAmount,
             String website
     ) {
-        public static DepositCompareRes fromDeposit(Deposit deposit) {
+        public static DepositCompareRes fromDeposit(Deposit deposit, String langCode, BankNameTranslator translator) {
+            String translatedBank = translator.translate(deposit.getBank().getBankName(), langCode);
+
             return new DepositCompareRes(
                     deposit.getId(),
-                    deposit.getName(),
-                    deposit.getBank().getBankName(),
+                    deposit.getNameByLang(langCode),
+                    translatedBank,
                     deposit.getBaseInterestRate(),
                     deposit.getMaxInterestRate(),
                     deposit.getDepositTerm(),
@@ -125,11 +130,13 @@ public record CompareRes(
             Integer maxMonthly,
             String website
     ) {
-        public static SavingCompareRes fromSaving(InstallmentSaving saving) {
+        public static SavingCompareRes fromSaving(InstallmentSaving saving, String langCode, BankNameTranslator translator) {
+            String translatedBank = translator.translate(saving.getBank().getBankName(), langCode);
+
             return new SavingCompareRes(
                     saving.getId(),
-                    saving.getName(),
-                    saving.getBank().getBankName(),
+                    saving.getNameByLang(langCode),
+                    translatedBank,
                     saving.getBaseInterestRate(),
                     saving.getMaxInterestRate(),
                     saving.getSavingTerm(),
