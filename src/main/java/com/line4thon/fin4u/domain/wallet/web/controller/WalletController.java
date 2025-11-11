@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.wallet.web.controller;
 
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
+import com.line4thon.fin4u.domain.wallet.exception.PrincipalNotReadable;
 import com.line4thon.fin4u.domain.wallet.service.WalletService;
 import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
@@ -35,7 +36,7 @@ public class WalletController {
             Principal principal
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
-            throw new RuntimeException("인증 안 됨");
+            throw new PrincipalNotReadable();
         }
 
         MainWalletRes response = walletService.getWalletMainPage(getMemberId(principal.getName()));
@@ -49,7 +50,7 @@ public class WalletController {
             @RequestBody @Validated CardReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
-            throw new RuntimeException("인증 안 됨");
+            throw new PrincipalNotReadable();
         }
         MainWalletRes.Cards response = walletService.addCard(getMemberId(principal.getName()), request);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
@@ -61,7 +62,7 @@ public class WalletController {
             @RequestBody @Validated CheckingAccountReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank())
-            throw new RuntimeException("인증 안 됨");
+            throw new PrincipalNotReadable();
         MainWalletRes.CheckingAccounts response = walletService.addCheckingAccount(getMemberId(principal.getName()), request);
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
@@ -72,7 +73,7 @@ public class WalletController {
             Principal principal,
             @RequestBody @Validated SavingAccountReq request
     ) {
-        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         MainWalletRes.SavingAccounts response = walletService.addSavingAccount(getMemberId(principal.getName()), request);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
@@ -83,7 +84,7 @@ public class WalletController {
             @RequestBody @Validated CardReq request
     ) {
         if (principal.getName().isEmpty() || principal.getName().isBlank()) {
-            throw new RuntimeException("인증 안 됨");
+            throw new PrincipalNotReadable();
         }
         MainWalletRes.Cards response = walletService.editCardDetail(getMemberId(principal.getName()), request);
 
@@ -97,7 +98,7 @@ public class WalletController {
             @RequestBody @Validated CheckingAccountReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank())
-            throw new RuntimeException("인증 안 됨");
+            throw new PrincipalNotReadable();
         MainWalletRes.CheckingAccounts response = walletService.editCheckAccountDetail(getMemberId(principal.getName()), request);
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
@@ -108,7 +109,7 @@ public class WalletController {
             Principal principal,
             @RequestBody @Validated SavingAccountReq request
     ) {
-        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         MainWalletRes.SavingAccounts response = walletService.editSavingAccountDetail(getMemberId(principal.getName()), request);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
@@ -118,7 +119,7 @@ public class WalletController {
             Principal principal,
             @PathVariable @NotNull Long cardId
     ) {
-        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         walletService.deleteCard(getMemberId(principal.getName()), cardId);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
@@ -128,7 +129,7 @@ public class WalletController {
             Principal principal,
             @PathVariable @NotNull Long checkingAccountId
     ) {
-        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         walletService.deleteCheckAccount(getMemberId(principal.getName()), checkingAccountId);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
@@ -138,7 +139,7 @@ public class WalletController {
             Principal principal,
             @PathVariable @NotNull Long savingAccountId
     ) {
-        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new RuntimeException("인증 안 됨");
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         walletService.deleteSavingAccount(getMemberId(principal.getName()), savingAccountId);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
