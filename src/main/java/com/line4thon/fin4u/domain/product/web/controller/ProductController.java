@@ -1,0 +1,41 @@
+package com.line4thon.fin4u.domain.product.web.controller;
+
+import com.line4thon.fin4u.domain.product.entity.enums.Type;
+import com.line4thon.fin4u.domain.product.service.Product.ProductServiceImpl;
+import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
+import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
+import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
+import com.line4thon.fin4u.global.response.SuccessResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/products")
+@RequiredArgsConstructor
+public class ProductController {
+
+    private final ProductServiceImpl productService;
+
+    // 상품 검색(필터링)
+    @GetMapping
+    public ResponseEntity<SuccessResponse<?>> getFilterProduct(
+            @ModelAttribute ProductFilterReq filter
+    ) {
+        ProductFilterRes res = productService.getFilterProduct(filter);
+        return ResponseEntity.status(
+                HttpStatus.OK).body(SuccessResponse.ok(res));
+    }
+
+    // 상품 상세 조회
+    @GetMapping("/{type}/{id}")
+    public ResponseEntity<SuccessResponse<?>> getProductDetail(
+            @PathVariable("type") Type type,
+            @PathVariable("id") Long id
+    ){
+        ProductDetailRes res = productService.getProductDetail(type, id);
+        return ResponseEntity.status(
+                HttpStatus.OK).body(SuccessResponse.ok(res));
+    }
+}
