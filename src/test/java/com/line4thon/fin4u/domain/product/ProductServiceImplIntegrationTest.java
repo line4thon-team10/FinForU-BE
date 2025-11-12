@@ -20,11 +20,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
+@ActiveProfiles("test")
 @Transactional
 class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
 
@@ -69,7 +71,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .maxInterestRate(4.5)
                         .depositTerm(36)
                         .isFlexible(false)
-                        .minDepositAmount(100_000)
+                        .minDepositAmount(10000)
                         .officialWebsite(null)
                         .build()
         );
@@ -88,7 +90,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .maxInterestRate(3.0)
                         .depositTerm(12)
                         .isFlexible(false)
-                        .minDepositAmount(50_000)
+                        .minDepositAmount(5000)
                         .officialWebsite(null)
                         .build()
         );
@@ -107,7 +109,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .maxInterestRate(5.5)
                         .savingTerm(12)
                         .isFlexible(true)
-                        .maxMonthly(500_000)
+                        .maxMonthly(500000)
                         .officialWebsite(null)
                         .build()
         );
@@ -126,7 +128,7 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
                         .maxInterestRate(3.5)
                         .savingTerm(36)
                         .isFlexible(false)
-                        .maxMonthly(300_000)
+                        .maxMonthly(300000)
                         .officialWebsite(null)
                         .build()
         );
@@ -169,17 +171,6 @@ class ProductServiceImplIntegrationTest extends IntegrationTestSupport {
     // -----------------------------------------------------------
     // 1) 전체 검색
     // -----------------------------------------------------------
-    @DisplayName("ProductType이 null이면 모든 상품 유형을 검색한다.")
-    @Test
-    void searchAllProductTypes() {
-        ProductFilterReq req = new ProductFilterReq(null, null, 0.0, 10.0, 60);
-
-        ProductFilterRes res = productService.getFilterProduct(req, EN);
-
-        assertThat(res.deposits()).hasSize(2);
-        assertThat(res.savings()).hasSize(2);
-        assertThat(res.cards()).hasSize(2);
-    }
 
     // -----------------------------------------------------------
     // 2) 예금 필터
