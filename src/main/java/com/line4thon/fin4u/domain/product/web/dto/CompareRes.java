@@ -9,14 +9,12 @@ import com.line4thon.fin4u.global.util.BankNameTranslator;
 
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record CompareRes(
         List<CardCompareRes> cards,
         List<DepositCompareRes> deposits,
         List<SavingCompareRes> savings,
         Highlights highlights
 ) {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public record Highlights(
             Long bestBaseRateId,            // 예금/적금: 최대 기본금리
             Long bestMaxRateId,             // 예금/적금: 최대 최고금리
@@ -60,7 +58,6 @@ public record CompareRes(
     }
 
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CardCompareRes(
             Long id,
             String name,
@@ -89,7 +86,6 @@ public record CompareRes(
         }
     }
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositCompareRes(
             Long id,
             String name,
@@ -118,7 +114,6 @@ public record CompareRes(
         }
     }
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingCompareRes(
             Long id,
             String name,

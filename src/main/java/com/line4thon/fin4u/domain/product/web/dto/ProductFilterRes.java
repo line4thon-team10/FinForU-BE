@@ -11,13 +11,11 @@ import com.line4thon.fin4u.global.util.BankNameTranslator;
 import java.util.Collections;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record ProductFilterRes (
     List<CardProductRes> cards,
     List<DepositProductRes> deposits,
     List<SavingProductRes> savings
 ){
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CardProductRes(
             Long id,
             String name,
@@ -70,7 +68,7 @@ public record ProductFilterRes (
         }
 
     }
-    @JsonInclude(JsonInclude.Include.ALWAYS)
+
     public record DepositProductRes(
             Long id,
             String name,
@@ -92,7 +90,7 @@ public record ProductFilterRes (
             );
         }
     }
-    @JsonInclude(JsonInclude.Include.ALWAYS)
+
     public record SavingProductRes(
             Long id,
             String name,
