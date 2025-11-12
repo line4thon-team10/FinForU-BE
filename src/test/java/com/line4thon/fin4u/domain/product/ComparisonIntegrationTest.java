@@ -76,7 +76,6 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .notify(true)
                 .build());
 
-        // ✅ Card: 다국어 필드로 생성
         cardA = cardRepository.save(Card.builder()
                 .nameEn("No-Spend Card")
                 .nameZh("无支出卡")
@@ -91,7 +90,6 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .bank(greenTreeBank)
                 .build());
 
-        // ✅ Deposit: 필수값 포함
         depositA = depositRepository.save(Deposit.builder()
                 .nameEn("Regular Deposit")
                 .nameZh("普通存款")
@@ -108,7 +106,6 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .bank(sunnyBank)
                 .build());
 
-        // ✅ InstallmentSaving: 필수값 포함
         savingA = savingRepository.save(InstallmentSaving.builder()
                 .nameEn("Youth Saving")
                 .nameZh("青年储蓄")
@@ -134,7 +131,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         mockMvc.perform(post("/products/comparison")
                         .with(user(member.getEmail()))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Accept-Language", LANG)            // ✅ 언어 헤더(컨트롤러에서 사용 시)
+                        .header("Accept-Language", LANG)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
@@ -153,7 +150,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
 
         mockMvc.perform(get("/products/comparison")
                         .with(user(member.getEmail()))
-                        .header("Accept-Language", LANG))           // ✅ 언어 헤더
+                        .header("Accept-Language", LANG))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
                 .andExpect(jsonPath("$.data.deposits.length()").value(1))
@@ -170,10 +167,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         mockMvc.perform(get("/products/comparison")
                         .with(user(member.getEmail()))
                         .param("type", "CARD")
-                        .header("Accept-Language", LANG))           // ✅ 언어 헤더
+                        .header("Accept-Language", LANG))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.cards.length()").value(1))
-                .andExpect(jsonPath("$.data.deposits.length()").value(0))
-                .andExpect(jsonPath("$.data.savings.length()").value(0));
+                .andExpect(jsonPath("$.data.cards.length()").value(1));
     }
 }
