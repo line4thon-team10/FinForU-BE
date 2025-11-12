@@ -11,7 +11,7 @@ import com.line4thon.fin4u.global.util.BankNameTranslator;
 import java.util.Collections;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record ProductFilterRes (
     List<CardProductRes> cards,
     List<DepositProductRes> deposits,
@@ -31,13 +31,33 @@ public record ProductFilterRes (
                     : card.getCardBenefit();
 
             String promotion = benefits.stream()
-                    .filter(b -> b.getBenefitCategory() == BenefitCategory.PROMOTION)
+                    .filter(CardBenefit::isPromotional)
                     .map(b -> b.getDescriptionByLang(langCode))
                     .findFirst()
                     .orElse(null);
 
-            String fee = (card.getDomesticAnnualFee() == 0) ? "no annual fee" : card.getDomesticAnnualFee() + "won fee.";
-            String finalOutput = (promotion != null && !promotion.isBlank()) ? promotion + " and " + fee : fee;
+            int annualFee = (card.getInternationalAnnualFee() > 0)
+                    ? card.getInternationalAnnualFee()
+                    : card.getDomesticAnnualFee();
+
+            String feeDescription;
+            if (annualFee == 0) {
+                feeDescription = switch (langCode.toLowerCase()) {
+                    case "zh" -> "无年费";
+                    case "vi" -> "miễn phí thường niên";
+                    default -> "No annual fee";
+                };
+            } else {
+                feeDescription = switch (langCode.toLowerCase()) {
+                    case "zh" -> annualFee + "韩元年费";
+                    case "vi" -> "phí thường niên " + annualFee + " won";
+                    default -> annualFee + " won fee";
+                };
+            }
+            String finalOutput = (promotion != null && !promotion.isBlank())
+                    ? promotion + " and " + feeDescription
+                    : feeDescription;
+
 
             String translatedBank = translator.translate(card.getBank().getBankName(), langCode);
 

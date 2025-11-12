@@ -9,7 +9,7 @@ import com.line4thon.fin4u.global.util.BankNameTranslator;
 
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record CompareRes(
         List<CardCompareRes> cards,
         List<DepositCompareRes> deposits,
