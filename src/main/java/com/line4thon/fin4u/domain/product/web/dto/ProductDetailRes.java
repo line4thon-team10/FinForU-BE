@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.product.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.line4thon.fin4u.domain.product.entity.Card;
+import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.global.util.BankNameTranslator;
@@ -17,8 +18,14 @@ public record ProductDetailRes (
     public record CardBenefitDetail(
             String category,
             String description
-    ) {}
-
+    ) {
+        public static CardBenefitDetail from(CardBenefit benefit, String langCode) {
+            return new CardBenefitDetail(
+                    benefit.getBenefitCategory().getNameByLang(langCode),
+                    benefit.getDescriptionByLang(langCode)
+            );
+        }
+    }
 
     /// 카드 상세
     @JsonInclude(JsonInclude.Include.ALWAYS)
@@ -32,9 +39,15 @@ public record ProductDetailRes (
             List<CardBenefitDetail> benefits
 
     ){
-        public static CardDetailRes fromCard(Card card, List<CardBenefitDetail> benefits, String langCode, BankNameTranslator translator) {
+        public static CardDetailRes fromCard(Card card, String langCode, BankNameTranslator translator) {
 
+            //은행명 번역
             String translatedBank = translator.translate(card.getBank().getBankName(), langCode);
+
+            // 언어에 맞는 카테고리&혜택 내용
+            List<CardBenefitDetail> benefits = card.getCardBenefit().stream()
+                    .map(b -> CardBenefitDetail.from(b, langCode))
+                    .toList();
 
             return new CardDetailRes(
                     card.getId(),

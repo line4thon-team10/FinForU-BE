@@ -17,11 +17,9 @@ public class CardBenefit extends BaseEntity {
     @Column(name="card_benefits_id")
     private Long id;
 
-    @Column(name = "is_promotional", nullable = false)
-    private boolean isPromotional;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private String  benefitCategory;
+    private BenefitCategory  benefitCategory;
 
     @Column(name = "description_en")
     private String descriptionEn;
