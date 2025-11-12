@@ -15,6 +15,7 @@ public class MemberResponse {
     private String nationality;
     private Member.Language language;
     private Member.VisaType visaType;
+    private Member.DesiredProductType desiredProductType;
     private Timestamp visaExpir;
     private boolean notify;
     private Timestamp createdAt;
@@ -27,6 +28,7 @@ public class MemberResponse {
                 .nationality(m.getNationality())
                 .language(m.getLanguage())
                 .visaType(m.getVisaType())
+                .desiredProductType(m.getDesiredProductType())
                 .visaExpir(m.getVisa_expir())
                 .notify(m.isNotify())
                 .createdAt(m.getCreated_at())
