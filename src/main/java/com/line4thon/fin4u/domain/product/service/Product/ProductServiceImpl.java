@@ -87,8 +87,7 @@ public class ProductServiceImpl implements ProductService {
             case CARD -> {
                 Card card = cardRepo.findById(id)
                         .orElseThrow(NotFoundCardException::new);
-                List<ProductDetailRes.CardBenefitDetail> cardBenefits = getCardBenefitsDetail(card, langCode);
-                cardDetail = ProductDetailRes.CardDetailRes.fromCard(card, cardBenefits, langCode, translator);
+                cardDetail = ProductDetailRes.CardDetailRes.fromCard(card, langCode, translator);
             }
             case DEPOSIT -> {
                 Deposit deposit = depositRepo.findById(id)
@@ -109,16 +108,16 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    private List<ProductDetailRes.CardBenefitDetail> getCardBenefitsDetail(Card card, String langCode){
-        List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
-        return benefits.stream()
-                .map(b -> {
-                    String category = b.getBenefitCategory();
-                    String description = b.getDescriptionByLang(langCode);
-                    return new ProductDetailRes.CardBenefitDetail(category, description);
-                })
-                .toList();
-    }
+//    private List<ProductDetailRes.CardBenefitDetail> getCardBenefitsDetail(Card card, String langCode){
+//        List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
+//        return benefits.stream()
+//                .map(b -> {
+//                    String category = b.getBenefitCategory();
+//                    String description = b.getDescriptionByLang(langCode);
+//                    return new ProductDetailRes.CardBenefitDetail(category, description);
+//                })
+//                .toList();
+//    }
 
     // 카드 상품 필터링 검색
     private List<ProductFilterRes.CardProductRes> searchCards(ProductFilterReq filter, String langCode) {
