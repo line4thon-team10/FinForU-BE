@@ -6,7 +6,8 @@ import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 
 public interface ProductService {
-    ProductFilterRes getFilterProduct(ProductFilterReq filter);
 
-    ProductDetailRes getProductDetail(Type type, Long id);
+    ProductDetailRes getProductDetail(Type type, Long id, String langCode);
+
+    ProductFilterRes getFilterProduct(ProductFilterReq filter, String langCode);
 }

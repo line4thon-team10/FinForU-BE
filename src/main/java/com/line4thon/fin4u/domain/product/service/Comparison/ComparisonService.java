@@ -12,7 +12,7 @@ import java.util.List;
 public interface ComparisonService {
     void saveProduct(Principal principal, String token, Type type, Long productId);
 
-    ProductFilterRes getComparisonFilter(Principal principal, String guestToken, ProductFilterReq req);
+    ProductFilterRes getComparisonFilter(Principal principal, String guestToken, ProductFilterReq req, String langCode);
 
-    CompareRes compare(List<Long> productIds, Type type);
+    CompareRes compare(List<Long> productIds, Type type, String langCode);
 }

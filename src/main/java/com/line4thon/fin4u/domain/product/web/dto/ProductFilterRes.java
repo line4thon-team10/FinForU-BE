@@ -6,11 +6,12 @@ import com.line4thon.fin4u.domain.product.entity.CardBenefit;
 import com.line4thon.fin4u.domain.product.entity.Deposit;
 import com.line4thon.fin4u.domain.product.entity.InstallmentSaving;
 import com.line4thon.fin4u.domain.product.entity.enums.BenefitCategory;
+import com.line4thon.fin4u.global.util.BankNameTranslator;
 
 import java.util.Collections;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record ProductFilterRes (
     List<CardProductRes> cards,
     List<DepositProductRes> deposits,
@@ -23,30 +24,51 @@ public record ProductFilterRes (
             String bankName,
             String feeAndBenefit //프로모션 + 연회비
     ) {
-        public static CardProductRes fromCard(Card card) {
+        public static CardProductRes fromCard(Card card, String langCode, BankNameTranslator translator) {
 
             List<CardBenefit> benefits = card.getCardBenefit() == null
                     ? Collections.emptyList()
                     : card.getCardBenefit();
 
             String promotion = benefits.stream()
-                    .filter(b -> b.getBenefitCategory() == BenefitCategory.PROMOTION)
-                    .map(CardBenefit::getDescription)
+                    .filter(CardBenefit::isPromotional)
+                    .map(b -> b.getDescriptionByLang(langCode))
                     .findFirst()
                     .orElse(null);
 
-            String fee = (card.getDomesticAnnualFee() == 0) ? "no annual fee" : card.getDomesticAnnualFee()+"won fee.";
+            int annualFee = (card.getInternationalAnnualFee() > 0)
+                    ? card.getInternationalAnnualFee()
+                    : card.getDomesticAnnualFee();
 
-            String finalOutput = (promotion != null && !promotion.isBlank()) ? promotion + " and " + fee : fee;
+            String feeDescription;
+            if (annualFee == 0) {
+                feeDescription = switch (langCode.toLowerCase()) {
+                    case "zh" -> "无年费";
+                    case "vi" -> "miễn phí thường niên";
+                    default -> "No annual fee";
+                };
+            } else {
+                feeDescription = switch (langCode.toLowerCase()) {
+                    case "zh" -> annualFee + "韩元年费";
+                    case "vi" -> "phí thường niên " + annualFee + " won";
+                    default -> annualFee + " won fee";
+                };
+            }
+            String finalOutput = (promotion != null && !promotion.isBlank())
+                    ? promotion + " and " + feeDescription
+                    : feeDescription;
+
+
+            String translatedBank = translator.translate(card.getBank().getBankName(), langCode);
 
             return new CardProductRes(
                     card.getId(),
-                    card.getName(),
-                    card.getBank().getBankName(),
+                    card.getNameByLang(langCode),
+                    translatedBank,
                     finalOutput
-
             );
         }
+
     }
     @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositProductRes(
@@ -54,15 +76,19 @@ public record ProductFilterRes (
             String name,
             String bankName,
             double maxInterestRate,
-            int termMonths
+            Integer termMonths,
+            boolean isFlexible
     ){
-        public static DepositProductRes fromDeposit(Deposit deposit){
+        public static DepositProductRes fromDeposit(Deposit deposit, String langCode, BankNameTranslator translator){
+            String translatedBank = translator.translate(deposit.getBank().getBankName(), langCode);
+
             return new DepositProductRes(
                     deposit.getId(),
-                    deposit.getName(),
-                    deposit.getBank().getBankName(),
+                    deposit.getNameByLang(langCode),
+                    translatedBank,
                     deposit.getMaxInterestRate(),
-                    deposit.getDepositTerm()
+                    deposit.getDepositTerm(),
+                    deposit.getIsFlexible()
             );
         }
     }
@@ -72,16 +98,20 @@ public record ProductFilterRes (
             String name,
             String bankName,
             double maxInterestRate,
-            int termMonths,
+            Integer termMonths,
+            boolean isFlexible,
             int maxMonthly //월 최대 납입 가능 금액
     ){
-        public static SavingProductRes fromSaving(InstallmentSaving saving) {
+        public static SavingProductRes fromSaving(InstallmentSaving saving, String langCode, BankNameTranslator translator) {
+            String translatedBank = translator.translate(saving.getBank().getBankName(), langCode);
+
             return new SavingProductRes(
                     saving.getId(),
-                    saving.getName(),
-                    saving.getBank().getBankName(),
+                    saving.getNameByLang(langCode),
+                    translatedBank,
                     saving.getMaxInterestRate(),
                     saving.getSavingTerm(),
+                    saving.getIsFlexible(),
                     saving.getMaxMonthly()
             );
         }

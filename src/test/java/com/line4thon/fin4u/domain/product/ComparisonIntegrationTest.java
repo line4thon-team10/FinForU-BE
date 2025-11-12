@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @AutoConfigureMockMvc
 @Transactional
@@ -55,11 +53,10 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
     Bank greenTreeBank;
     Bank sunnyBank;
 
-
+    private static final String LANG = "en"; // 테스트 기본 언어
 
     @BeforeEach
     void setUp() {
-
         greenTreeBank = bankRepository.save(Bank.builder()
                 .bankName("GreenTree Bank")
                 .build());
@@ -67,6 +64,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         sunnyBank = bankRepository.save(Bank.builder()
                 .bankName("Sunny Bank")
                 .build());
+
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .password("pw")
@@ -80,28 +78,49 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .build());
 
         cardA = cardRepository.save(Card.builder()
-                .name("무지출카드")
-                .bank(greenTreeBank)
-                .description("카드 A 설명")
+                .nameEn("No-Spend Card")
+                .nameZh("无支出卡")
+                .nameVi("Thẻ không chi tiêu")
+                .descriptionEn("카드 A 설명")
+                .descriptionZh("卡 A 说明")
+                .descriptionVi("Mô tả thẻ A")
                 .cardType(CardType.CHECK)
                 .domesticAnnualFee(0)
+                .internationalAnnualFee(0)
+                .officialWebsite(null)
+                .bank(greenTreeBank)
                 .build());
 
         depositA = depositRepository.save(Deposit.builder()
-                .name("일반예금")
-                .bank(sunnyBank)
-                .description("예금 A 설명")
-                .minDepositAmount(2)
+                .nameEn("Regular Deposit")
+                .nameZh("普通存款")
+                .nameVi("Tiền gửi thường")
+                .descriptionEn("예금 A 설명")
+                .descriptionZh("存款 A 说明")
+                .descriptionVi("Mô tả tiền gửi A")
+                .baseInterestRate(2.0)
                 .maxInterestRate(3.2)
                 .depositTerm(12)
+                .isFlexible(false)
+                .minDepositAmount(2)
+                .officialWebsite(null)
+                .bank(sunnyBank)
                 .build());
 
         savingA = savingRepository.save(InstallmentSaving.builder()
-                .name("청년적금")
-                .bank(sunnyBank)
-                .description("적금 A 설명")
+                .nameEn("Youth Saving")
+                .nameZh("青年储蓄")
+                .nameVi("Tiết kiệm thanh niên")
+                .descriptionEn("적금 A 설명")
+                .descriptionZh("储蓄 A 说明")
+                .descriptionVi("Mô tả tiết kiệm A")
+                .baseInterestRate(3.0)
                 .maxInterestRate(4.1)
                 .savingTerm(24)
+                .isFlexible(false)
+                .maxMonthly(300_000)
+                .officialWebsite(null)
+                .bank(sunnyBank)
                 .build());
     }
 
@@ -113,6 +132,7 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         mockMvc.perform(post("/products/comparison")
                         .with(user(member.getEmail()))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Accept-Language", LANG)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
@@ -130,7 +150,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
         comparisonRepository.save(Comparison.of(member, Type.SAVING, savingA.getId()));
 
         mockMvc.perform(get("/products/comparison")
-                .with(user(member.getEmail())))
+                        .with(user(member.getEmail()))
+                        .header("Accept-Language", LANG))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cards.length()").value(1))
                 .andExpect(jsonPath("$.data.deposits.length()").value(1))
@@ -146,10 +167,9 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
 
         mockMvc.perform(get("/products/comparison")
                         .with(user(member.getEmail()))
-                        .param("type", "CARD")) // QueryParam 로 전달
+                        .param("type", "CARD")
+                        .header("Accept-Language", LANG))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.cards.length()").value(1))
-                .andExpect(jsonPath("$.data.deposits.length()").value(0))
-                .andExpect(jsonPath("$.data.savings.length()").value(0));
+                .andExpect(jsonPath("$.data.cards.length()").value(1));
     }
 }
