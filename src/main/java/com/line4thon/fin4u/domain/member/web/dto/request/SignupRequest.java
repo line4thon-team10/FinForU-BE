@@ -30,6 +30,9 @@ public class SignupRequest {
     private Member.VisaType visaType;
 
     @NotNull
+    private Member.DesiredProductType desiredProductType;
+
+    @NotNull
     private Timestamp visaExpir; // yyyy-MM-ddTHH:mm:ss 형태로 매핑됨
 
     private Boolean notify = true;

@@ -53,6 +53,9 @@ public class AuthService {
                 .nationality(req.getNationality())
                 .language(req.getLanguage())
                 .visaType(req.getVisaType())
+                .desiredProductType(req.getDesiredProductType() == null
+                        ? Member.DesiredProductType.CARD
+                        : req.getDesiredProductType())
                 .visa_expir(req.getVisaExpir())
                 .notify(req.getNotify() == null ? true : req.getNotify())
                 .created_at(Timestamp.from(Instant.now()))
@@ -111,7 +114,8 @@ public class AuthService {
                 Map.of(
                         "name", m.getName(),
                         "lang", m.getLanguage().name(),
-                        "visa", m.getVisaType().name()
+                        "visa", m.getVisaType().name(),
+                        "product", m.getDesiredProductType().name()
                 )
         );
         cookieUtil.addAccessToken(res, newAccess, (int)(accessExpMinutes * 60));
@@ -124,7 +128,8 @@ public class AuthService {
                 Map.of(
                         "name", m.getName(),
                         "lang", m.getLanguage().name(),
-                        "visa", m.getVisaType().name()
+                        "visa", m.getVisaType().name(),
+                        "product", m.getDesiredProductType().name()
                 )
         );
         String refresh = jwtProvider.generateRefresh(m.getEmail());

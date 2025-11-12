@@ -16,4 +16,13 @@ public enum BenefitCategory {
     private final String enName;
     private final String zhName;
     private final String viName;
+
+    public String getNameByLang(String langCode) {
+        return switch (langCode.toLowerCase()) {
+            case "en" -> enName;
+            case "zh" -> zhName;
+            case "vi" -> viName;
+            default -> koName;
+        };
+    }
 }

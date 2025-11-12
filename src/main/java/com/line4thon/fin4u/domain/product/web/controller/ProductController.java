@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
+
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -21,9 +23,12 @@ public class ProductController {
     // 상품 검색(필터링)
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getFilterProduct(
-            @ModelAttribute ProductFilterReq filter
+            @ModelAttribute ProductFilterReq filter,
+            Locale locale
     ) {
-        ProductFilterRes res = productService.getFilterProduct(filter);
+        String langCode = locale.getLanguage();
+
+        ProductFilterRes res = productService.getFilterProduct(filter, langCode);
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }
@@ -32,9 +37,12 @@ public class ProductController {
     @GetMapping("/{type}/{id}")
     public ResponseEntity<SuccessResponse<?>> getProductDetail(
             @PathVariable(value = "type", required = true) Type type,
-            @PathVariable(value = "id", required = true) Long id
+            @PathVariable(value = "id", required = true) Long id,
+            Locale locale
     ){
-        ProductDetailRes res = productService.getProductDetail(type, id);
+        String langCode = locale.getLanguage();
+
+        ProductDetailRes res = productService.getProductDetail(type, id, langCode);
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
     }

@@ -9,18 +9,31 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "saving_product")
 public class InstallmentSaving extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "deposit_id")
+    @Column(name = "saving_id")
     private Long id;
 
-    @Column(name = "deposit_name", nullable = false)
-    private String name;
+    @Column(name = "saving_name_en", nullable = false)
+    private String nameEn;
+
+    @Column(name = "saving_name_zh", nullable = false)
+    private String nameZh;
+
+    @Column(name = "saving_name_vi", nullable = false)
+    private String nameVi;
 
     // 특징 정보
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "description_en", nullable = false)
+    private String descriptionEn;
+
+    @Column(name = "description_zh", nullable = false)
+    private String descriptionZh;
+
+    @Column(name = "description_vi", nullable = false)
+    private String descriptionVi;
 
     // 기본금리
     @Column(name = "base_interest_rate", nullable = false)
@@ -49,6 +62,24 @@ public class InstallmentSaving extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
+
+    public String getNameByLang(String langCode) {
+        return switch (langCode.toLowerCase()) {
+            case "en" -> this.nameEn;
+            case "zh" -> this.nameZh;
+            case "vi" -> this.nameVi;
+            default -> this.nameEn; // 기본값은 한국어
+        };
+    }
+
+    public String getDescriptionByLang(String langCode) {
+        return switch (langCode.toLowerCase()) {
+            case "en" -> this.descriptionEn;
+            case "zh" -> this.descriptionZh;
+            case "vi" -> this.descriptionVi;
+            default -> this.descriptionEn; // 기본값은 한국어
+        };
+    }
 
 
 }
