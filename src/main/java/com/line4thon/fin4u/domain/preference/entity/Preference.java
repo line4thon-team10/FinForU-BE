@@ -29,6 +29,7 @@ public class Preference extends BaseEntity {
             joinColumns = @JoinColumn(name = "pref_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "pref_type")
+    @Builder.Default
     private List<Type> preferProductTypes = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -37,6 +38,7 @@ public class Preference extends BaseEntity {
             joinColumns = @JoinColumn(name = "pref_id"))
     @Enumerated(EnumType.STRING) // Enum 이름을 DB에 문자열로 저장
     @Column(name = "goal_period")
+    @Builder.Default
     private List<SavingGoalPeriod> savingGoalPeriods = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
