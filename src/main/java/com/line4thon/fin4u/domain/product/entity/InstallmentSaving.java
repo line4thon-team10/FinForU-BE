@@ -9,11 +9,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name="saving_product")
+@Table(name = "saving_product")
 public class InstallmentSaving extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "deposit_id")
+    @Column(name = "saving_id")
     private Long id;
 
     @Column(name = "saving_name_en", nullable = false)
