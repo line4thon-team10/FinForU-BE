@@ -76,7 +76,8 @@ public record ProductFilterRes (
             String name,
             String bankName,
             double maxInterestRate,
-            int termMonths
+            Integer termMonths,
+            boolean isFlexible
     ){
         public static DepositProductRes fromDeposit(Deposit deposit, String langCode, BankNameTranslator translator){
             String translatedBank = translator.translate(deposit.getBank().getBankName(), langCode);
@@ -86,7 +87,8 @@ public record ProductFilterRes (
                     deposit.getNameByLang(langCode),
                     translatedBank,
                     deposit.getMaxInterestRate(),
-                    deposit.getDepositTerm()
+                    deposit.getDepositTerm(),
+                    deposit.getIsFlexible()
             );
         }
     }
@@ -96,7 +98,8 @@ public record ProductFilterRes (
             String name,
             String bankName,
             double maxInterestRate,
-            int termMonths,
+            Integer termMonths,
+            boolean isFlexible,
             int maxMonthly //월 최대 납입 가능 금액
     ){
         public static SavingProductRes fromSaving(InstallmentSaving saving, String langCode, BankNameTranslator translator) {
@@ -108,6 +111,7 @@ public record ProductFilterRes (
                     translatedBank,
                     saving.getMaxInterestRate(),
                     saving.getSavingTerm(),
+                    saving.getIsFlexible(),
                     saving.getMaxMonthly()
             );
         }
