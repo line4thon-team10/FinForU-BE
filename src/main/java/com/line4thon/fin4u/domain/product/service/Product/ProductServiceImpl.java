@@ -48,13 +48,18 @@ public class ProductServiceImpl implements ProductService {
         // null값이면 true (사용자가 상품 선택을 하지 않았을때)
         boolean searchAll = (productType == null);
 
+        // 금리, 기간 필터링시 카드 x
+        boolean hasRateOrTerm = filter.minRate() != null
+                || filter.maxRate() != null
+                || filter.termMonths() != null;
+
         // 1. 예금 상품 검색
         if (searchAll || productType == Type.DEPOSIT) {
             depositRes = searchDeposits(filter, langCode);
         }
 
         // 2. 카드 상품 검색
-        if (searchAll || productType == Type.CARD) {
+        if ((searchAll || productType == Type.CARD) && !hasRateOrTerm) {
             cardRes = searchCards(filter, langCode);
         }
 
@@ -108,7 +113,7 @@ public class ProductServiceImpl implements ProductService {
         List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
         return benefits.stream()
                 .map(b -> {
-                    String category = b.getBenefitCategory().name();
+                    String category = b.getBenefitCategory();
                     String description = b.getDescriptionByLang(langCode);
                     return new ProductDetailRes.CardBenefitDetail(category, description);
                 })

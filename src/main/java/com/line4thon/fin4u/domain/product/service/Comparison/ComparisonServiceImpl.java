@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -88,8 +89,14 @@ public class ComparisonServiceImpl implements ComparisonService{
         }
 
         // 3. 필터
+        boolean hasRateOrTerm =
+                filter.minRate() != null || filter.maxRate() != null || filter.termMonths() != null;
+
+        List<ProductFilterRes.CardProductRes> cards =
+                (!hasRateOrTerm) ? searchCards(filter, cardIds, langCode) : null;
+
         return new ProductFilterRes(
-                searchCards(filter, cardIds, langCode),
+                cards,
                 searchDeposits(filter, depositIds,  langCode),
                 searchSavings(filter, savingIds, langCode)
         );
