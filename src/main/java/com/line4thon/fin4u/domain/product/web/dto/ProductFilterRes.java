@@ -31,7 +31,7 @@ public record ProductFilterRes (
                     : card.getCardBenefit();
 
             String promotion = benefits.stream()
-                    .filter(CardBenefit::isPromotional)
+                    .filter(b -> b.getBenefitCategory() == BenefitCategory.PROMOTION)
                     .map(b -> b.getDescriptionByLang(langCode))
                     .findFirst()
                     .orElse(null);
