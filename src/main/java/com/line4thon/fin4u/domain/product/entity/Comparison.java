@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name="saving_product")
 public class Comparison extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
