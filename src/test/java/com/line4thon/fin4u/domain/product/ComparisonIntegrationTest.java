@@ -73,9 +73,10 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .name("테스터")
                 .language(Member.Language.ENGLISH)
                 .nationality("KOR")
-                .visaType(Member.VisaType.ACCOUNT_OPEN)
+                .visaType(Member.VisaType.ACADEMIC) // 수정
                 .visa_expir(Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS)))
                 .notify(true)
+                .desiredProductType(Member.DesiredProductType.CARD) // 수정
                 .build());
 
         cardA = cardRepository.save(Card.builder()

@@ -37,14 +37,20 @@ public class Member {
     @Column(nullable=false)
     private String nationality;
 
-    //비자 유형별로
-    public enum VisaType { ACCOUNT_OPEN, CARD_AVAILABLE }
-    @Enumerated(EnumType.STRING)
+    //비자 유형별(비자 유형 enum 내용 변경됨)
+    public enum VisaType { ACADEMIC, EMPLOYMENT, RESIDENCE_FAMILY, INVESTMENT_BUSINESS, OTHERS }
+    @Convert(converter = VisaTypeConverter.class)
     @Column(name = "visa_type", nullable = false, length = 50)
     private VisaType visaType;
 
     @Column(nullable = false, columnDefinition = "timestamp")
     private Timestamp visa_expir;
+
+    //DesiredProductType (새로 추가됨)
+    public enum DesiredProductType{ CARD, DEPOSIT, INSTALLMENT_SAVINGS }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "desired_product_type", nullable = false, length = 50)
+    private DesiredProductType desiredProductType;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) default 1")
     private boolean notify;
@@ -62,12 +68,16 @@ public class Member {
     public void onInsert() {
         if (created_at == null) created_at = Timestamp.from(Instant.now());
         if (updated_at == null) updated_at = created_at;
+        if (desiredProductType == null) desiredProductType = DesiredProductType.CARD;
     }
+
+
 
     //UPDATE 쿼리가 실행되기 직전에 자동으로 updated_at이 자동으로 현재 시각으로 변경
     @PreUpdate
     public void onUpdate() {
         updated_at = Timestamp.from(Instant.now());
+        if (desiredProductType == null) desiredProductType = DesiredProductType.CARD; // 혹시나 null 들어갈 일 있으면 CARD로 들어감
     }
 }
 

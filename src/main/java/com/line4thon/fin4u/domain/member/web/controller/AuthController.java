@@ -3,6 +3,7 @@ package com.line4thon.fin4u.domain.member.web.controller;
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.web.dto.request.LoginRequest;
 import com.line4thon.fin4u.domain.member.web.dto.request.SignupRequest;
+import com.line4thon.fin4u.domain.member.web.dto.request.UpdateMemberRequest;
 import com.line4thon.fin4u.domain.member.web.dto.response.AuthResponse;
 import com.line4thon.fin4u.domain.member.web.dto.response.MemberResponse;
 import com.line4thon.fin4u.domain.member.web.dto.request.DeleteAccountRequest;
@@ -98,6 +99,28 @@ public class AuthController {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException());
         return ResponseEntity.ok(MemberResponse.from(member));
+    }
+
+    //내 정보 수정
+    @PatchMapping("/me")
+    public ResponseEntity<MemberResponse> editMe(
+            @RequestBody UpdateMemberRequest req
+    ) {
+        String email = currentUserEmail();
+        if (!StringUtils.hasText(email)) return ResponseEntity.status(401).build();
+
+        Member m = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (req.getNationality() != null) m.setNationality(req.getNationality());
+        if (req.getLanguage() != null) m.setLanguage(req.getLanguage());
+        if (req.getVisaType() != null) m.setVisaType(req.getVisaType());
+        if (req.getVisaExpir() != null) m.setVisa_expir(req.getVisaExpir());
+        if (req.getNotify() != null) m.setNotify(req.getNotify());
+        if (req.getDesiredProductType() != null) m.setDesiredProductType(req.getDesiredProductType());
+
+        // JPA dirty checking으로 업데이트
+        return ResponseEntity.ok(MemberResponse.from(m));
     }
 
     /**
