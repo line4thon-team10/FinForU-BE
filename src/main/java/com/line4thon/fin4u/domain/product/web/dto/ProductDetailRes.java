@@ -10,10 +10,17 @@ import com.line4thon.fin4u.global.util.BankNameTranslator;
 import java.util.List;
 
 public record ProductDetailRes (
-        CardDetailRes cardDetail,
-        DepositDetailRes depositDetail,
-        SavingDetailRes savingDetail
+        List<CardDetailRes> cardDetail,
+        List<DepositDetailRes> depositDetail,
+        List<SavingDetailRes> savingDetail
 ){
+    //null이 아닌 빈리스트가 나오도록 초기화
+    public ProductDetailRes {
+        cardDetail = (cardDetail == null) ? List.of() : cardDetail;
+        depositDetail = (depositDetail == null) ? List.of() : depositDetail;
+        savingDetail = (savingDetail == null) ? List.of() : savingDetail;
+    }
+
     // 카드 혜택
     public record CardBenefitDetail(
             String category,
@@ -61,6 +68,7 @@ public record ProductDetailRes (
     }
 
     /// 예금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositDetailRes(
             Long id,
             String name,
@@ -91,6 +99,7 @@ public record ProductDetailRes (
     }
 
     /// 적금
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingDetailRes(
             Long id,
             String name,
