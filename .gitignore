@@ -42,5 +42,3 @@ src/main/resources/application.yml
 
 ### MacOS ###
 .DS_Store
-
-mcp-servers-config.json
