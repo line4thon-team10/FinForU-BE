@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -15,7 +16,7 @@ public class MemberResponse {
     private String nationality;
     private Member.Language language;
     private Member.VisaType visaType;
-    private Member.DesiredProductType desiredProductType;
+    private Set<Member.DesiredProductType> desiredProductTypes;
     private Timestamp visaExpir;
     private boolean notify;
     private Timestamp createdAt;
@@ -28,7 +29,7 @@ public class MemberResponse {
                 .nationality(m.getNationality())
                 .language(m.getLanguage())
                 .visaType(m.getVisaType())
-                .desiredProductType(m.getDesiredProductType())
+                .desiredProductTypes(m.getDesiredProductTypes())
                 .visaExpir(m.getVisa_expir())
                 .notify(m.isNotify())
                 .createdAt(m.getCreated_at())

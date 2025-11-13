@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -74,7 +75,9 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .visaType(Member.VisaType.ACADEMIC) // 수정
                 .visa_expir(Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS)))
                 .notify(true)
-                .desiredProductType(Member.DesiredProductType.CARD) // 수정
+                .desiredProductTypes(Set.of(
+                        Member.DesiredProductType.CARD  // 기본값 1개
+                ))
                 .build());
 
         cardA = cardRepository.save(Card.builder()
