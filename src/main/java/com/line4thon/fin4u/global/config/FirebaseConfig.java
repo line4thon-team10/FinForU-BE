@@ -7,24 +7,37 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import java.io.*;
 
-@Configuration public class FirebaseConfig {
-    @Value("${fcm.service-account}")
-    private String serviceAccountPath;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Base64;
 
-    @Bean public FirebaseApp firebaseApp() throws IOException {
+@Configuration
+public class FirebaseConfig {
+
+    @Value("${FIREBASE_SERVICE_ACCOUNT_BASE64}")
+    private String serviceAccountBase64;
+
+    @Bean
+    public FirebaseApp firebaseApp() throws Exception {
+
         if (FirebaseApp.getApps().isEmpty()) {
-            InputStream in;
-            if (serviceAccountPath.startsWith("classpath:")) {
-                String p = serviceAccountPath.replace("classpath:", ""); in = new ClassPathResource(p).getInputStream();
-            } else {
-                in = new FileInputStream(serviceAccountPath);
-            }
-            FirebaseOptions options = FirebaseOptions.builder() .setCredentials(GoogleCredentials.fromStream(in)) .build(); return FirebaseApp.initializeApp(options); }
-        return FirebaseApp.getInstance(); }
 
-    @Bean public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
-        return FirebaseMessaging.getInstance(firebaseApp); }
+            byte[] decodedBytes = Base64.getDecoder().decode(serviceAccountBase64);
+            InputStream serviceAccountStream = new ByteArrayInputStream(decodedBytes);
+
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))
+                    .build();
+
+            return FirebaseApp.initializeApp(options);
+        }
+
+        return FirebaseApp.getInstance();
+    }
+
+    @Bean
+    public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
+        return FirebaseMessaging.getInstance(firebaseApp);
+    }
 }
