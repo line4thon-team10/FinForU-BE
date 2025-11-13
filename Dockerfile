@@ -4,6 +4,38 @@ FROM eclipse-temurin:21-jre
 # 애플리케이션 실행 디렉토리
 WORKDIR /app
 
+# 크롤러 종속성 설치
+USER root
+
+RUN apt-get update && \
+    apt-get install -y \
+    libglib2.0-0 \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxcb1 \
+    libxkbcommon0 \
+    libatspi2.0-0 \
+    libx11-6 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libasound2 \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+# (원래 Dockerfile이 non-root 유저를 사용했다면 다시 전환)
+USER app
+
 # CI에서 만든 JAR 복사
 COPY build/libs/*.jar /app/app.jar
 
