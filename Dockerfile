@@ -29,7 +29,6 @@ RUN apt-get update && \
     libgbm1 \
     libpango-1.0-0 \
     libcairo2 \
-    libasound2 \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
