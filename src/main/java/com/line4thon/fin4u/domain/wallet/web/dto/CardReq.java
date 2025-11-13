@@ -26,5 +26,5 @@ public class CardReq {
     @NotBlank(groups = {ForSave.class, ForUpdate.class}, message = "상품 별명은 비어있을 수 없습니다.")
     private String cardName;
 
-    private LocalDate upcomingDate;
+    private Integer upcomingDate;
 }
