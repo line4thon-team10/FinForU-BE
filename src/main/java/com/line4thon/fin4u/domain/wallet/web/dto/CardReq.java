@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class CardReq {
-    @NotNull(groups = ForUpdate.class)
+    @NotNull(groups = ForUpdate.class, message = "ID 필드는 비어있을 수 없습니다.")
     private Long cardId;
 
     @NotNull(groups = {ForSave.class, ForUpdate.class}, message = "은행 종류는 비어있을 수 없습니다.")
