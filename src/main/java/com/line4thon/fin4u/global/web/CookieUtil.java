@@ -37,19 +37,19 @@ public class CookieUtil {
         cookie.setSecure(secure);
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
-        cookie.setDomain(domain);
+        //cookie.setDomain(domain);
         res.addCookie(cookie);
 
-        // SameSite
-        res.addHeader("Set-Cookie",
-                "%s=%s; Path=/; Max-Age=%d; HttpOnly; %s%s%s"
-                        .formatted(
-                                name, value, maxAge,
-                                secure ? "Secure; " : "",
-                                "Domain=" + domain + "; ",
-                                "SameSite=" + sameSite
-                        )
-        );
+        String setCookie = "%s=%s; Path=/; Max-Age=%d; HttpOnly%s; SameSite=%s"
+                .formatted(
+                        name,                // %s
+                        value,               // %s
+                        maxAge,              // %d
+                        secure ? "; Secure" : "", // %s
+                        sameSite            // %s
+                );
+
+        res.addHeader("Set-Cookie", setCookie);
     }
 
     private String getCookie(HttpServletRequest req, String name) {

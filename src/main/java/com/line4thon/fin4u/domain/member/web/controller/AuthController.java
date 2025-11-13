@@ -23,6 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
@@ -117,7 +120,13 @@ public class AuthController {
         if (req.getVisaType() != null) m.setVisaType(req.getVisaType());
         if (req.getVisaExpir() != null) m.setVisa_expir(req.getVisaExpir());
         if (req.getNotify() != null) m.setNotify(req.getNotify());
-        if (req.getDesiredProductType() != null) m.setDesiredProductType(req.getDesiredProductType());
+        if (req.getDesiredProductTypes() != null) {
+            if (req.getDesiredProductTypes().isEmpty()) {
+                m.setDesiredProductTypes(new HashSet<>(Set.of(Member.DesiredProductType.CARD)));
+            } else {
+                m.setDesiredProductTypes(new HashSet<>(req.getDesiredProductTypes()));
+            }
+        }
 
         // JPA dirty checking으로 업데이트
         return ResponseEntity.ok(MemberResponse.from(m));

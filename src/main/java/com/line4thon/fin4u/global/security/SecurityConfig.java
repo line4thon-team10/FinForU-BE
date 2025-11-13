@@ -23,7 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // Cookie+JWT 조합이면 CSRF 고려 필요. API 전용이면 disable
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfig()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
@@ -44,4 +44,17 @@ public class SecurityConfig {
     public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
         return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
+
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfig() {
+        var c = new org.springframework.web.cors.CorsConfiguration();
+        c.setAllowedOrigins(java.util.List.of("http://localhost:5173")); // 딱 이거만
+        c.setAllowedMethods(java.util.List.of("*"));
+        c.setAllowedHeaders(java.util.List.of("*"));
+        c.setAllowCredentials(true);   // 쿠키 설정에 중요
+        var s = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        s.registerCorsConfiguration("/**", c);
+        return s;
+    }
+
 }
