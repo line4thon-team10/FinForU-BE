@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "qdrant-mcp-server": {
-      "command": "/home/ubuntu/Qdrant_MCP/mcp-server-qdrant-master/.venv/bin/mcp-server-qdrant",
+      "command": "/mcp-server/mcp-server-qdrant-master/.venv/bin/mcp-server-qdrant",
       "args": [
         "--transport",
         "stdio"
