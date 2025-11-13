@@ -79,25 +79,28 @@ public class ProductServiceImpl implements ProductService {
     // 상품 상세 조회
     public ProductDetailRes getProductDetail(Type type, Long id, String langCode) {
 
-        ProductDetailRes.CardDetailRes cardDetail = null;
-        ProductDetailRes.DepositDetailRes depositDetail = null;
-        ProductDetailRes.SavingDetailRes savingDetail = null;
+        List<ProductDetailRes.CardDetailRes> cardDetail = null;
+        List<ProductDetailRes.DepositDetailRes> depositDetail = null;
+        List<ProductDetailRes.SavingDetailRes> savingDetail = null;
 
         switch (type) {
             case CARD -> {
                 Card card = cardRepo.findById(id)
                         .orElseThrow(NotFoundCardException::new);
-                cardDetail = ProductDetailRes.CardDetailRes.fromCard(card, langCode, translator);
+                ProductDetailRes.CardDetailRes detail = ProductDetailRes.CardDetailRes.fromCard(card, langCode, translator);
+                cardDetail = List.of(detail);
             }
             case DEPOSIT -> {
                 Deposit deposit = depositRepo.findById(id)
                         .orElseThrow(NotFoundDepositException::new);
-                depositDetail = ProductDetailRes.DepositDetailRes.fromDeposit(deposit, langCode, translator);
+                ProductDetailRes.DepositDetailRes detail = ProductDetailRes.DepositDetailRes.fromDeposit(deposit, langCode, translator);
+                depositDetail = List.of(detail);
             }
             case SAVING -> {
                 InstallmentSaving saving = savingRepo.findById(id)
                         .orElseThrow(NotFoundSavingException::new);
-                savingDetail = ProductDetailRes.SavingDetailRes.fromSaving(saving, langCode, translator);
+                ProductDetailRes.SavingDetailRes detail = ProductDetailRes.SavingDetailRes.fromSaving(saving, langCode, translator);
+                savingDetail = List.of(detail);
             }
         }
 

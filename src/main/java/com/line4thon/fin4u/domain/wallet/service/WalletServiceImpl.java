@@ -149,7 +149,7 @@ public class WalletServiceImpl implements WalletService {
                 .wallet(wallet)
                 .cardType(request.getCardType())
                 .cardName(request.getCardName())
-                .paymentDate(request.getUpcomingDate() == null ? null : request.getUpcomingDate().getDayOfMonth())
+                .paymentDate(request.getUpcomingDate() == null ? null : request.getUpcomingDate())
                 .build();
         cardRepository.save(card);
 
@@ -190,7 +190,7 @@ public class WalletServiceImpl implements WalletService {
                 .cardType(request.getCardType())
                 .bank(request.getBank())
                 .cardName(request.getCardName())
-                .paymentDate(request.getUpcomingDate().getDayOfMonth())
+                .paymentDate(request.getUpcomingDate() == null ? null : request.getUpcomingDate())
                 .build();
 
         return new MainWalletRes.Cards(
