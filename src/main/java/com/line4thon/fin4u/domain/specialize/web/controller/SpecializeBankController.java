@@ -39,7 +39,6 @@ public class SpecializeBankController {
         return buildAndReturnResponseEntity(result);
     }
 
-    @NotNull
     private ResponseEntity<SuccessResponse<?>> buildAndReturnResponseEntity(List<ForeignerStore> result) {
         if(result.isEmpty()) throw new SpecializeBankNotFoundException();
 
