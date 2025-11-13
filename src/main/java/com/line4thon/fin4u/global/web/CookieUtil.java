@@ -32,14 +32,15 @@ public class CookieUtil {
     }
 
     private void addCookie(HttpServletResponse res, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secure);
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
-        //cookie.setDomain(domain);
-        res.addCookie(cookie);
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(secure);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(maxAge);
+//        //cookie.setDomain(domain);
+//        res.addCookie(cookie);
 
+        // SameSite 포함해서 직접 헤더 작성
         String setCookie = "%s=%s; Path=/; Max-Age=%d; HttpOnly%s; SameSite=%s"
                 .formatted(
                         name,                // %s

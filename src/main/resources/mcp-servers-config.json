@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "qdrant-mcp-server": {
+      "command": "/home/ubuntu/Qdrant_MCP/mcp-server-qdrant-master/.venv/bin/mcp-server-qdrant",
+      "args": [
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "QDRANT_URL": "http://qdrant:6333",
+        "COLLECTION_NAME": "chatbot",
+        "EMBEDDING_PROVIDER": "openai",
+        "EMBEDDING_MODEL": "text-embedding-3-small",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "QDRANT_READ_ONLY": "true"
+      }
+    }
+  }
+}

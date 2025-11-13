@@ -8,6 +8,8 @@ import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
 import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
 import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForSave;
+import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForUpdate;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@Validated
 @RestController
 @RequestMapping("/wallet")
 @RequiredArgsConstructor
@@ -47,7 +50,7 @@ public class WalletController {
     @PostMapping("/card")
     public ResponseEntity<SuccessResponse<?>> addCard(
             Principal principal,
-            @RequestBody @Validated CardReq request
+            @RequestBody @Validated(ForSave.class) CardReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
             throw new PrincipalNotReadable();
@@ -59,7 +62,7 @@ public class WalletController {
     @PostMapping("/check-account")
     public ResponseEntity<SuccessResponse<?>> addCheckingAccount(
             Principal principal,
-            @RequestBody @Validated CheckingAccountReq request
+            @RequestBody @Validated(ForSave.class) CheckingAccountReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank())
             throw new PrincipalNotReadable();
@@ -71,7 +74,7 @@ public class WalletController {
     @PostMapping("/save-account")
     public ResponseEntity<SuccessResponse<?>> addSavingAccount(
             Principal principal,
-            @RequestBody @Validated SavingAccountReq request
+            @RequestBody @Validated(ForSave.class) SavingAccountReq request
     ) {
         if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         MainWalletRes.SavingAccounts response = walletService.addSavingAccount(getMemberId(principal.getName()), request);
@@ -81,7 +84,7 @@ public class WalletController {
     @PutMapping("/card")
     public ResponseEntity<SuccessResponse<?>> modifyCardDetail(
             Principal principal,
-            @RequestBody @Validated CardReq request
+            @RequestBody @Validated(ForUpdate.class) CardReq request
     ) {
         if (principal.getName().isEmpty() || principal.getName().isBlank()) {
             throw new PrincipalNotReadable();
@@ -95,7 +98,7 @@ public class WalletController {
     @PutMapping("/check-account")
     public ResponseEntity<SuccessResponse<?>> modifyCheckingAccount(
             Principal principal,
-            @RequestBody @Validated CheckingAccountReq request
+            @RequestBody @Validated(ForUpdate.class) CheckingAccountReq request
     ) {
         if(principal.getName().isEmpty() || principal.getName().isBlank())
             throw new PrincipalNotReadable();
@@ -107,7 +110,7 @@ public class WalletController {
     @PutMapping("/save-account")
     public ResponseEntity<SuccessResponse<?>> modifySavingAccount(
             Principal principal,
-            @RequestBody @Validated SavingAccountReq request
+            @RequestBody @Validated(ForUpdate.class) SavingAccountReq request
     ) {
         if (principal.getName().isEmpty() || principal.getName().isBlank()) throw new PrincipalNotReadable();
         MainWalletRes.SavingAccounts response = walletService.editSavingAccountDetail(getMemberId(principal.getName()), request);
