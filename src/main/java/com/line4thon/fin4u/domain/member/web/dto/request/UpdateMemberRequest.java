@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Getter @Setter
 public class UpdateMemberRequest {
@@ -14,5 +15,5 @@ public class UpdateMemberRequest {
     private Member.VisaType visaType;
     private Timestamp visaExpir;
     private Boolean notify;
-    private Member.DesiredProductType desiredProductType;
+    private Set<Member.DesiredProductType> desiredProductTypes;
 }

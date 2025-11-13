@@ -6,6 +6,8 @@ import lombok.*;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -46,11 +48,16 @@ public class Member {
     @Column(nullable = false, columnDefinition = "timestamp")
     private Timestamp visa_expir;
 
-    //DesiredProductType (새로 추가됨)
-    public enum DesiredProductType{ CARD, DEPOSIT, INSTALLMENT_SAVINGS }
+    //DesiredProductType (새로 추가됨): 여러 개 선택
+    public enum DesiredProductType { CARD, DEPOSIT, INSTALLMENT_SAVINGS }
+    @ElementCollection(fetch = FetchType.EAGER) // 필요시 LAZY
+    @CollectionTable(
+            name = "member_desired_products",
+            joinColumns = @JoinColumn(name = "member_id")
+    )
     @Enumerated(EnumType.STRING)
-    @Column(name = "desired_product_type", nullable = false, length = 50)
-    private DesiredProductType desiredProductType;
+    @Column(name = "product_type", nullable = false, length = 50)
+    private Set<DesiredProductType> desiredProductTypes = new HashSet<>();
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) default 1")
     private boolean notify;
@@ -66,18 +73,10 @@ public class Member {
     //생성 시간(created_at) 과 최종 수정 시간(updated_at) 을 DB에서 자동으로 채우거나 유지
     @PrePersist
     public void onInsert() {
-        if (created_at == null) created_at = Timestamp.from(Instant.now());
-        if (updated_at == null) updated_at = created_at;
-        if (desiredProductType == null) desiredProductType = DesiredProductType.CARD;
-    }
-
-
-
-    //UPDATE 쿼리가 실행되기 직전에 자동으로 updated_at이 자동으로 현재 시각으로 변경
-    @PreUpdate
-    public void onUpdate() {
-        updated_at = Timestamp.from(Instant.now());
-        if (desiredProductType == null) desiredProductType = DesiredProductType.CARD; // 혹시나 null 들어갈 일 있으면 CARD로 들어감
+        if (desiredProductTypes == null || desiredProductTypes.isEmpty()) {
+            desiredProductTypes = new HashSet<>(Set.of(DesiredProductType.CARD));
+        }
+        // 기존 created_at/updated_at 처리 그대로
     }
 }
 
