@@ -78,6 +78,8 @@ class ComparisonIntegrationTest extends IntegrationTestSupport {
                 .desiredProductTypes(Set.of(
                         Member.DesiredProductType.CARD  // 기본값 1개
                 ))
+                .created_at(Timestamp.from(Instant.now()))
+                .updated_at(Timestamp.from(Instant.now()))
                 .build());
 
         cardA = cardRepository.save(Card.builder()
