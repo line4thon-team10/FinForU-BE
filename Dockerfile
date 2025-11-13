@@ -1,5 +1,5 @@
 # Runtime image (JRE만)
-FROM eclipse-temurin:21-jre
+FROM ubuntu:22.04
 
 # 애플리케이션 실행 디렉토리
 WORKDIR /app
@@ -9,6 +9,7 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y \
+    openjdk-21-jdk \
     libglib2.0-0 \
     libnss3 \
     libnspr4 \
