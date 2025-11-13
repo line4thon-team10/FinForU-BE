@@ -32,8 +32,6 @@ RUN apt-get update && \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# (원래 Dockerfile이 non-root 유저를 사용했다면 다시 전환)
-USER app
 
 # CI에서 만든 JAR 복사
 COPY build/libs/*.jar /app/app.jar
