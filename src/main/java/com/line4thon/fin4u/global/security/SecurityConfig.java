@@ -26,7 +26,18 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/**"
+                                "/members/login",
+                                "/members/signup",
+                                "/members/refresh",
+                                "/consents",
+                                "/guide",
+                                "/guide/**",
+                                "/products",
+                                "/products/**",
+                                "/exrate",
+                                "/specialize",
+                                "/push/**",
+                                "/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         .anyRequest().authenticated()
@@ -47,7 +58,6 @@ public class SecurityConfig {
         return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 
-/*
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfig() {
         var c = new org.springframework.web.cors.CorsConfiguration();
@@ -59,6 +69,5 @@ public class SecurityConfig {
         s.registerCorsConfiguration("/**", c);
         return s;
     }
-*/
 
 }
