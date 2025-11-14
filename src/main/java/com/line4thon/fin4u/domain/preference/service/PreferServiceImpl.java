@@ -4,7 +4,6 @@ import com.line4thon.fin4u.domain.member.entity.Member;
 import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.preference.entity.Preference;
-import com.line4thon.fin4u.domain.preference.exception.NotFoundPreferenceException;
 import com.line4thon.fin4u.domain.preference.repository.PreferenceRepository;
 import com.line4thon.fin4u.domain.preference.web.dto.SavePreferReq;
 import com.line4thon.fin4u.domain.preference.web.dto.SavePreferRes;

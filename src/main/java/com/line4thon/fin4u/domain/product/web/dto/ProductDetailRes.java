@@ -68,7 +68,6 @@ public record ProductDetailRes (
     }
 
     /// 예금
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record DepositDetailRes(
             Long id,
             String name,
@@ -99,7 +98,6 @@ public record ProductDetailRes (
     }
 
     /// 적금
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SavingDetailRes(
             Long id,
             String name,

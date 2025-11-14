@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.product.web.controller;
 
 import com.line4thon.fin4u.domain.member.entity.Member;
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
+import com.line4thon.fin4u.domain.product.service.Comparison.ComparisonService;
 import com.line4thon.fin4u.domain.product.service.Comparison.ComparisonServiceImpl;
 import com.line4thon.fin4u.domain.product.web.dto.CompareRes;
 import com.line4thon.fin4u.domain.product.web.dto.CompareSaveReq;
@@ -25,7 +26,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ComparisonController {
 
-    private final ComparisonServiceImpl comparisonService;
+    private final ComparisonService comparisonService;
 
     //바구니에 저장
     @PostMapping
