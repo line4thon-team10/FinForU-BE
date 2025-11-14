@@ -2,6 +2,8 @@ package com.line4thon.fin4u.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -63,10 +65,12 @@ public class Member {
     private boolean notify;
 
     //이 행이 처음 INSERT될 때, 현재 시각을 자동으로 넣음
+    @CreationTimestamp
     @Column(nullable = false, columnDefinition = "timestamp default current_timestamp")
     private Timestamp created_at;
 
     //처음엔 비워두지만, 나중에 UPDATE가 일어나면 현재 시각으로 자동 갱신
+    @UpdateTimestamp
     @Column(columnDefinition = "timestamp null on update current_timestamp")
     private Timestamp updated_at;
 

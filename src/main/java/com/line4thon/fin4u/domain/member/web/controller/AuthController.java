@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import com.line4thon.fin4u.domain.member.service.MemberService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +33,12 @@ import java.util.Set;
 public class AuthController {
 
     private final AuthService authService;
+    private final MemberService memberService;
+
     private final CookieUtil cookieUtil;
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+
     private String currentUserEmail() {
         var ctx = SecurityContextHolder.getContext();
         var auth = (ctx != null) ? ctx.getAuthentication() : null;
@@ -107,30 +111,16 @@ public class AuthController {
     //내 정보 수정
     @PatchMapping("/me")
     public ResponseEntity<MemberResponse> editMe(
-            @RequestBody UpdateMemberRequest req
+            @Valid @RequestBody UpdateMemberRequest req
     ) {
         String email = currentUserEmail();
         if (!StringUtils.hasText(email)) return ResponseEntity.status(401).build();
 
-        Member m = memberRepository.findByEmail(email)
-                .orElseThrow(MemberNotFoundException::new);
-
-        if (req.getNationality() != null) m.setNationality(req.getNationality());
-        if (req.getLanguage() != null) m.setLanguage(req.getLanguage());
-        if (req.getVisaType() != null) m.setVisaType(req.getVisaType());
-        if (req.getVisaExpir() != null) m.setVisa_expir(req.getVisaExpir());
-        if (req.getNotify() != null) m.setNotify(req.getNotify());
-        if (req.getDesiredProductTypes() != null) {
-            if (req.getDesiredProductTypes().isEmpty()) {
-                m.setDesiredProductTypes(new HashSet<>(Set.of(Member.DesiredProductType.CARD)));
-            } else {
-                m.setDesiredProductTypes(new HashSet<>(req.getDesiredProductTypes()));
-            }
-        }
-
-        // JPA dirty checking으로 업데이트
-        return ResponseEntity.ok(MemberResponse.from(m));
+        MemberResponse response = memberService.editMe(email, req);
+        return ResponseEntity.ok(response);
     }
+
+
 
     /**
      * 회원 탈퇴(계정 삭제)
@@ -140,7 +130,7 @@ public class AuthController {
      */
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteMe(
-            @RequestBody(required = false) DeleteAccountRequest request,
+            @Valid @RequestBody(required = false) DeleteAccountRequest request,
             HttpServletResponse res
     ) {
         String email = currentUserEmail();
