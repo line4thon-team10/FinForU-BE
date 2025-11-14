@@ -47,6 +47,39 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
+    @GetMapping("/card/{cardId}")
+    public ResponseEntity<SuccessResponse<?>> getCardDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long cardId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+    }
+
+    @GetMapping("/check-account/{checkingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> getCheckingAcocuntDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long checkingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+    }
+
+    @GetMapping("/save-account/{savingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> getSavingAccountDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long savingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+    }
+
     @PostMapping("/card")
     public ResponseEntity<SuccessResponse<?>> addCard(
             Principal principal,
