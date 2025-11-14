@@ -4,10 +4,7 @@ import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.exception.PrincipalNotReadable;
 import com.line4thon.fin4u.domain.wallet.service.WalletService;
-import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
-import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.*;
 import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForSave;
 import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForUpdate;
 import com.line4thon.fin4u.global.response.SuccessResponse;
@@ -55,7 +52,10 @@ public class WalletController {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
             throw new PrincipalNotReadable();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+
+        CardDetailRes response = walletService.getCardDetail(getMemberId(principal.getName()), cardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
     @GetMapping("/check-account/{checkingAccountId}")
@@ -66,7 +66,10 @@ public class WalletController {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
             throw new PrincipalNotReadable();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+
+        CheckingAccountDetailRes response = walletService.getCheckingAccountDetail(getMemberId(principal.getName()), checkingAccountId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
     @GetMapping("/save-account/{savingAccountId}")
@@ -77,7 +80,10 @@ public class WalletController {
         if(principal.getName().isEmpty() || principal.getName().isBlank()) {
             throw new PrincipalNotReadable();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(null));
+
+        SavingAccountDetailRes response = walletService.getSavingAccountDetail(getMemberId(principal.getName()), savingAccountId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
 
     @PostMapping("/card")
