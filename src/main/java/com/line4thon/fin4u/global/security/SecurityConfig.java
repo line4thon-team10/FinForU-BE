@@ -62,7 +62,7 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfig() {
         var c = new org.springframework.web.cors.CorsConfiguration();
-        c.setAllowedOrigins(java.util.List.of("http://localhost:5173")); // 딱 이거만
+        c.setAllowedOrigins(java.util.List.of("https://finforu.vercel.app"));
         c.setAllowedMethods(java.util.List.of("*"));
         c.setAllowedHeaders(java.util.List.of("*"));
         c.setAllowCredentials(true);   // 쿠키 설정에 중요
