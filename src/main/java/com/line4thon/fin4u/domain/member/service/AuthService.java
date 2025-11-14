@@ -20,7 +20,11 @@ import com.line4thon.fin4u.domain.member.web.dto.request.DeleteAccountRequest;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +57,11 @@ public class AuthService {
                 .nationality(req.getNationality())
                 .language(req.getLanguage())
                 .visaType(req.getVisaType())
-                .desiredProductType(req.getDesiredProductType() == null
-                        ? Member.DesiredProductType.CARD
-                        : req.getDesiredProductType())
+                .desiredProductTypes(
+                        (req.getDesiredProductTypes() == null || req.getDesiredProductTypes().isEmpty())
+                                ? new HashSet<>(Set.of(Member.DesiredProductType.CARD))
+                                : new HashSet<>(req.getDesiredProductTypes())
+                )
                 .visa_expir(req.getVisaExpir())
                 .notify(req.getNotify() == null ? true : req.getNotify())
                 .created_at(Timestamp.from(Instant.now()))
@@ -109,35 +115,34 @@ public class AuthService {
         Member m = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
-        String newAccess = jwtProvider.generateAccess(
-                email,
-                Map.of(
-                        "name", m.getName(),
-                        "lang", m.getLanguage().name(),
-                        "visa", m.getVisaType().name(),
-                        "product", m.getDesiredProductType().name()
-                )
-        );
+        String newAccess = jwtProvider.generateAccess(email, buildAccessClaims(m));
         cookieUtil.addAccessToken(res, newAccess, (int)(accessExpMinutes * 60));
     }
 
     /** 공용: 액세스/리프레시 둘 다 발급 + 쿠키 세팅 */
     private void issueTokens(Member m, HttpServletResponse res) {
-        String access = jwtProvider.generateAccess(
-                m.getEmail(),
-                Map.of(
-                        "name", m.getName(),
-                        "lang", m.getLanguage().name(),
-                        "visa", m.getVisaType().name(),
-                        "product", m.getDesiredProductType().name()
-                )
-        );
+        String access = jwtProvider.generateAccess(m.getEmail(), buildAccessClaims(m));
         String refresh = jwtProvider.generateRefresh(m.getEmail());
 
         cookieUtil.addAccessToken(res, access, (int)(accessExpMinutes * 60));
         cookieUtil.addRefreshToken(res, refresh, (int)(refreshExpDays * 24 * 60 * 60));
     }
 
+    /** 액세스 토큰 클레임 구성 (다중 desiredProductTypes 반영) */
+    private Map<String, Object> buildAccessClaims(Member m) {
+        var types = (m.getDesiredProductTypes() == null || m.getDesiredProductTypes().isEmpty())
+                ? Collections.singleton(Member.DesiredProductType.CARD) // 안전 기본값
+                : m.getDesiredProductTypes();
+
+        var products = types.stream().map(Enum::name).collect(Collectors.toList());
+
+        return Map.of(
+                "name", m.getName(),
+                "lang", m.getLanguage().name(),
+                "visa", m.getVisaType().name(),
+                "products", products // ✅ 배열로 저장
+        );
+    }
 
     /** 로그아웃: HttpOnly 토큰 쿠키 삭제 */
     public void logout(HttpServletResponse res) {
