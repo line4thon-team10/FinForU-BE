@@ -75,7 +75,7 @@ class CompareServiceIntegrationTest extends IntegrationTestSupport {
         List<Long> ids = List.of(c1.getId(), c2.getId());
 
         // when
-        CompareRes result = comparisonService.compare(ids, Type.CARD, LANG); // ✅ langCode 전달
+        CompareRes result = comparisonService.compare(ids, Type.CARD, LANG); // langCode 전달
 
         // then
         assertThat(result.cards()).hasSize(2);
