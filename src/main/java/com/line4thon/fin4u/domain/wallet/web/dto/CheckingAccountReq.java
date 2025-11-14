@@ -13,6 +13,6 @@ public class CheckingAccountReq {
     @NotNull(groups = ForUpdate.class, message = "ID 필드는 비어있을 수 없습니다.")
     private Long checkingAccountId;
 
-    @NotNull(groups = {ForUpdate.class, ForSave.class}, message = "은행은 비어있을 수 없습니다.")
+    @NotNull(groups = {ForSave.class}, message = "은행은 비어있을 수 없습니다.")
     private Bank bank;
 }

@@ -6,15 +6,15 @@ import com.line4thon.fin4u.domain.wallet.entity.CheckingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.SavingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
 import com.line4thon.fin4u.domain.wallet.entity.WalletCard;
+import com.line4thon.fin4u.domain.wallet.exception.CardNotFoundException;
+import com.line4thon.fin4u.domain.wallet.exception.CheckingAccountNotFoundException;
+import com.line4thon.fin4u.domain.wallet.exception.SavingAccountNotFoundException;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
 import com.line4thon.fin4u.domain.wallet.repository.WalletCardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.SavingAccountRepository;
 import com.line4thon.fin4u.domain.wallet.repository.WalletRepository;
-import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
-import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -67,6 +68,59 @@ public class WalletServiceImpl implements WalletService {
                 checks,
                 saves,
                 cards
+        );
+    }
+
+    @Override
+    public CardDetailRes getCardDetail(Long memberId, Long cardId) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(WalletNotFoundException::new);
+
+        WalletCard founded = wallet.getCards().stream()
+                .filter(c -> c.getId().equals(cardId))
+                .findFirst()
+                .orElseThrow(CardNotFoundException::new);
+
+        return new CardDetailRes(
+                founded.getId(),
+                founded.getCardName()
+        );
+    }
+
+    @Override
+    public CheckingAccountDetailRes getCheckingAccountDetail(Long memberId, Long cardId) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(WalletNotFoundException::new);
+
+        CheckingAccount founded = wallet.getCheckingAccounts().stream()
+                .filter(c -> c.getId().equals(cardId))
+                .findFirst()
+                .orElseThrow(CheckingAccountNotFoundException::new);
+
+        return new CheckingAccountDetailRes(
+                founded.getId(),
+                founded.getBank().getLower()
+        );
+    }
+
+    @Override
+    public SavingAccountDetailRes getSavingAccountDetail(Long memberId, Long cardId) {
+        Wallet wallet = walletRepository.findByMemberMemberId(memberId)
+                .orElseThrow(WalletNotFoundException::new);
+
+        SavingAccount founded = wallet.getSavingAccounts().stream()
+                .filter(c -> c.getId().equals(cardId))
+                .findFirst()
+                .orElseThrow(SavingAccountNotFoundException::new);
+
+        return new SavingAccountDetailRes(
+                founded.getBank().getLower(),
+                founded.getSavingType().toString(),
+                founded.getSavingName(),
+                founded.getMonthlyPay(),
+                founded.getPaymentDate(),
+                founded.getStartDate(),
+                founded.getEndDate()
         );
     }
 

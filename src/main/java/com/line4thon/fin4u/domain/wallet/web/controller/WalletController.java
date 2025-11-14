@@ -4,10 +4,7 @@ import com.line4thon.fin4u.domain.member.exception.MemberNotFoundException;
 import com.line4thon.fin4u.domain.member.repository.MemberRepository;
 import com.line4thon.fin4u.domain.wallet.exception.PrincipalNotReadable;
 import com.line4thon.fin4u.domain.wallet.service.WalletService;
-import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
-import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.*;
 import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForSave;
 import com.line4thon.fin4u.domain.wallet.web.dto.groups.ForUpdate;
 import com.line4thon.fin4u.global.response.SuccessResponse;
@@ -43,6 +40,48 @@ public class WalletController {
         }
 
         MainWalletRes response = walletService.getWalletMainPage(getMemberId(principal.getName()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/card/{cardId}")
+    public ResponseEntity<SuccessResponse<?>> getCardDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long cardId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+
+        CardDetailRes response = walletService.getCardDetail(getMemberId(principal.getName()), cardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/check-account/{checkingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> getCheckingAcocuntDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long checkingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+
+        CheckingAccountDetailRes response = walletService.getCheckingAccountDetail(getMemberId(principal.getName()), checkingAccountId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/save-account/{savingAccountId}")
+    public ResponseEntity<SuccessResponse<?>> getSavingAccountDetailInfo(
+            Principal principal,
+            @PathVariable @NotNull Long savingAccountId
+    ) {
+        if(principal.getName().isEmpty() || principal.getName().isBlank()) {
+            throw new PrincipalNotReadable();
+        }
+
+        SavingAccountDetailRes response = walletService.getSavingAccountDetail(getMemberId(principal.getName()), savingAccountId);
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.ok(response));
     }
@@ -137,7 +176,7 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
 
-    @DeleteMapping("/save-account/{savingAccountId}")
+    @DeleteMapping("/save-account/g")
     public ResponseEntity<SuccessResponse<?>> deleteSavingAccount(
             Principal principal,
             @PathVariable @NotNull Long savingAccountId

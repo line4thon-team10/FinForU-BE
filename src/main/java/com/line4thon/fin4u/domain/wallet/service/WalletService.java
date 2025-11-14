@@ -1,14 +1,16 @@
 package com.line4thon.fin4u.domain.wallet.service;
 
-import com.line4thon.fin4u.domain.wallet.web.dto.CardReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.CheckingAccountReq;
-import com.line4thon.fin4u.domain.wallet.web.dto.MainWalletRes;
-import com.line4thon.fin4u.domain.wallet.web.dto.SavingAccountReq;
+import com.line4thon.fin4u.domain.wallet.web.dto.*;
 
 public interface WalletService {
 
     // Main Page
     MainWalletRes getWalletMainPage(Long memberId);
+
+    // GET
+    CardDetailRes getCardDetail(Long memberId, Long cardId);
+    CheckingAccountDetailRes getCheckingAccountDetail(Long memberId, Long cardId);
+    SavingAccountDetailRes getSavingAccountDetail(Long memberId, Long cardId);
 
     // ADD
     MainWalletRes.CheckingAccounts addCheckingAccount(Long memberId, CheckingAccountReq request);
