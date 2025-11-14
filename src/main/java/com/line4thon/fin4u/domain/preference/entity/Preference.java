@@ -54,7 +54,7 @@ public class Preference extends BaseEntity {
     private Income income;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "bank_purpose", nullable = false)
+    @Column(name = "bank")
     private Bank bank;
 
     @OneToOne
