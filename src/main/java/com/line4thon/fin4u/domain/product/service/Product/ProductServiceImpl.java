@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,9 +40,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductFilterRes getFilterProduct(ProductFilterReq filter, String langCode) {
 
-        List<ProductFilterRes.CardProductRes> cardRes = Collections.emptyList();
-        List<ProductFilterRes.DepositProductRes> depositRes = Collections.emptyList();
-        List<ProductFilterRes.SavingProductRes> savingRes = Collections.emptyList();
+        List<ProductFilterRes.CardProductRes> cardRes = new ArrayList<>();
+        List<ProductFilterRes.DepositProductRes> depositRes = new ArrayList<>();
+        List<ProductFilterRes.SavingProductRes> savingRes = new ArrayList<>();
 
         Type productType = filter.type();
 
@@ -111,16 +112,6 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-//    private List<ProductDetailRes.CardBenefitDetail> getCardBenefitsDetail(Card card, String langCode){
-//        List<CardBenefit> benefits = benefitRepository.findByCardId(card.getId());
-//        return benefits.stream()
-//                .map(b -> {
-//                    String category = b.getBenefitCategory();
-//                    String description = b.getDescriptionByLang(langCode);
-//                    return new ProductDetailRes.CardBenefitDetail(category, description);
-//                })
-//                .toList();
-//    }
 
     // 카드 상품 필터링 검색
     private List<ProductFilterRes.CardProductRes> searchCards(ProductFilterReq filter, String langCode) {

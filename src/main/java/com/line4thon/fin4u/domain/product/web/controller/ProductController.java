@@ -1,6 +1,7 @@
 package com.line4thon.fin4u.domain.product.web.controller;
 
 import com.line4thon.fin4u.domain.product.entity.enums.Type;
+import com.line4thon.fin4u.domain.product.service.Product.ProductService;
 import com.line4thon.fin4u.domain.product.service.Product.ProductServiceImpl;
 import com.line4thon.fin4u.domain.product.web.dto.ProductDetailRes;
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterReq;
@@ -18,7 +19,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
     // 상품 검색(필터링)
     @GetMapping
