@@ -29,6 +29,7 @@ public class SecurityConfig {
                                 "/members/login",
                                 "/members/signup",
                                 "/members/refresh",
+                                "/members/me",
                                 "/consents",
                                 "/guide",
                                 "/guide/**",
