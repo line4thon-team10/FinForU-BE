@@ -29,6 +29,7 @@ public class SecurityConfig {
                                 "/members/login",
                                 "/members/signup",
                                 "/members/refresh",
+                                "/members/me",
                                 "/consents",
                                 "/guide",
                                 "/guide/**",
@@ -38,7 +39,6 @@ public class SecurityConfig {
                                 "/specialize",
                                 "/specialize/**",
                                 "/push/**",
-                                "/me",
                                 "/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
