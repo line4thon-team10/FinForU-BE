@@ -6,6 +6,9 @@ import com.line4thon.fin4u.domain.wallet.entity.CheckingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.SavingAccount;
 import com.line4thon.fin4u.domain.wallet.entity.Wallet;
 import com.line4thon.fin4u.domain.wallet.entity.WalletCard;
+import com.line4thon.fin4u.domain.wallet.exception.CardNotFoundException;
+import com.line4thon.fin4u.domain.wallet.exception.CheckingAccountNotFoundException;
+import com.line4thon.fin4u.domain.wallet.exception.SavingAccountNotFoundException;
 import com.line4thon.fin4u.domain.wallet.exception.WalletNotFoundException;
 import com.line4thon.fin4u.domain.wallet.repository.WalletCardRepository;
 import com.line4thon.fin4u.domain.wallet.repository.CheckingAccountRepository;
@@ -76,7 +79,7 @@ public class WalletServiceImpl implements WalletService {
         WalletCard founded = wallet.getCards().stream()
                 .filter(c -> c.getId().equals(cardId))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CardNotFoundException::new);
 
         return new CardDetailRes(
                 founded.getId(),
@@ -92,7 +95,7 @@ public class WalletServiceImpl implements WalletService {
         CheckingAccount founded = wallet.getCheckingAccounts().stream()
                 .filter(c -> c.getId().equals(cardId))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(CheckingAccountNotFoundException::new);
 
         return new CheckingAccountDetailRes(
                 founded.getId(),
@@ -108,7 +111,7 @@ public class WalletServiceImpl implements WalletService {
         SavingAccount founded = wallet.getSavingAccounts().stream()
                 .filter(c -> c.getId().equals(cardId))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(SavingAccountNotFoundException::new);
 
         return new SavingAccountDetailRes(
                 founded.getBank().getLower(),
