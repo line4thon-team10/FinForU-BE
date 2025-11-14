@@ -3,6 +3,7 @@ package com.line4thon.fin4u.global.crawl.component;
 import com.line4thon.fin4u.global.crawl.web.dto.KakaoMapResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,11 +13,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class KakaoMapService {
 
+    @Qualifier("kakao")
     private final WebClient kakaoClient;
 
     @Value("${kakao-map.api-key}")
     private String kakaoApiKey;
     private String KAKAO_URL = "https://dapi.kakao.com/v2/local/search/address.json";
+
+    public KakaoMapService(@Qualifier("kakao") WebClient kakaoClient) {
+        this.kakaoClient = kakaoClient;
+    }
 
     public KakaoMapResponse.Document getCoordinate(String address) {
 //        log.info("getCoordinate.address: {}", address);
