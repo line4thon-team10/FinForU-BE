@@ -9,27 +9,34 @@ public class VisaTypeConverter implements AttributeConverter<Member.VisaType, St
 
     @Override
     public String convertToDatabaseColumn(Member.VisaType attr) {
-        if (attr == null) return "ACCOUNT_OPEN"; // DB가 허용하는 기본값
+        if (attr == null) return "OTHERS";
 
-        // 새 enum → DB 옛 문자열 (★ 반드시 DB ENUM 멤버 중 하나만 반환)
         return switch (attr) {
-            case ACADEMIC,
-                 EMPLOYMENT,
-                 RESIDENCE_FAMILY,
-                 OTHERS -> "ACCOUNT_OPEN";
-            case INVESTMENT_BUSINESS -> "CARD_AVAILABLE";
+            case ACADEMIC            -> "ACADEMIC";
+            case EMPLOYMENT          -> "EMPLOYMENT";
+            case RESIDENCE_FAMILY    -> "RESIDENCE_FAMILY";
+            case INVESTMENT_BUSINESS -> "INVESTMENT_BUSINESS";
+            case OTHERS              -> "OTHERS";
         };
     }
 
+
     @Override
     public Member.VisaType convertToEntityAttribute(String db) {
-        if (db == null) return Member.VisaType.OTHERS;
+        if (db == null || db.isBlank()) return Member.VisaType.OTHERS;
 
-        // DB 옛 문자열 → 새 enum
         return switch (db) {
+            // 레거시 값 → 새 enum
+            case "ACCOUNT_OPEN"   -> Member.VisaType.OTHERS;
             case "CARD_AVAILABLE" -> Member.VisaType.INVESTMENT_BUSINESS;
-            case "ACCOUNT_OPEN", "" -> Member.VisaType.OTHERS; // 안전 맵핑
-            default -> Member.VisaType.OTHERS; // 혹시 모르는 값
+
+            // 새 값 그대로
+            case "ACADEMIC"            -> Member.VisaType.ACADEMIC;
+            case "EMPLOYMENT"          -> Member.VisaType.EMPLOYMENT;
+            case "RESIDENCE_FAMILY"    -> Member.VisaType.RESIDENCE_FAMILY;
+            case "INVESTMENT_BUSINESS" -> Member.VisaType.INVESTMENT_BUSINESS;
+            case "OTHERS"              -> Member.VisaType.OTHERS;
+            default                    -> Member.VisaType.OTHERS;
         };
     }
 }
