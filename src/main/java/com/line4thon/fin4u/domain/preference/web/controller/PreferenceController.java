@@ -1,5 +1,6 @@
 package com.line4thon.fin4u.domain.preference.web.controller;
 
+import com.line4thon.fin4u.domain.preference.service.PreferService;
 import com.line4thon.fin4u.domain.preference.service.PreferServiceImpl;
 import com.line4thon.fin4u.domain.preference.web.dto.SavePreferReq;
 import com.line4thon.fin4u.domain.preference.web.dto.SavePreferRes;
@@ -19,7 +20,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class PreferenceController {
 
-    private final PreferServiceImpl preferService;
+    private final PreferService preferService;
 
     // 저장&수정
     @PostMapping
