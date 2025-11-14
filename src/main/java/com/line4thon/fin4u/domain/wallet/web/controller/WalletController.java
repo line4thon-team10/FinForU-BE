@@ -137,7 +137,7 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.empty());
     }
 
-    @DeleteMapping("/save-account/{savingAccountId}")
+    @DeleteMapping("/save-account/g")
     public ResponseEntity<SuccessResponse<?>> deleteSavingAccount(
             Principal principal,
             @PathVariable @NotNull Long savingAccountId

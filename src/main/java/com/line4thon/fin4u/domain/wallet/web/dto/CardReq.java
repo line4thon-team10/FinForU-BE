@@ -17,13 +17,13 @@ public class CardReq {
     @NotNull(groups = ForUpdate.class, message = "ID 필드는 비어있을 수 없습니다.")
     private Long cardId;
 
-    @NotNull(groups = {ForSave.class, ForUpdate.class}, message = "은행 종류는 비어있을 수 없습니다.")
+    @NotNull(groups = {ForSave.class}, message = "은행 종류는 비어있을 수 없습니다.")
     private Bank bank;
 
-    @NotNull(groups = {ForSave.class, ForUpdate.class}, message = "카드 종류는 비어있을 수 없습니다.")
+    @NotNull(groups = {ForSave.class}, message = "카드 종류는 비어있을 수 없습니다.")
     private CardType cardType;
 
-    @NotBlank(groups = {ForSave.class, ForUpdate.class}, message = "상품 별명은 비어있을 수 없습니다.")
+    @NotBlank(groups = {ForSave.class}, message = "상품 별명은 비어있을 수 없습니다.")
     private String cardName;
 
     private Integer upcomingDate;
