@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 "/specialize",
                                 "/specialize/**",
                                 "/push/**",
+                                "/me",
                                 "/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
