@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 "/products/**",
                                 "/exrate",
                                 "/specialize",
+                                "/specialize/**",
                                 "/push/**",
                                 "/health"
                         ).permitAll()
