@@ -19,6 +19,7 @@ import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import com.line4thon.fin4u.domain.recommend.fastApi.AiRecClient;
 import com.line4thon.fin4u.domain.recommend.fastApi.dto.AiRecommendRes;
 import com.line4thon.fin4u.domain.recommend.fastApi.dto.AiRecommendReq;
+import com.line4thon.fin4u.domain.recommend.web.dto.RecommendRes;
 import com.line4thon.fin4u.global.util.BankNameTranslator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class RecommendServiceImpl implements RecommendService{
 
     //상품 추천
     @Override
-    public ProductFilterRes recommend(Principal principal, String langCode) {
+    public RecommendRes recommend(Principal principal, String langCode) {
 
         // 멤버 존재 확인
         Member member = checkMember(principal);
@@ -62,16 +63,14 @@ public class RecommendServiceImpl implements RecommendService{
         AiRecommendRes aiRes = ai.recommend(req);
 
         if(aiRes==null)
-            return new ProductFilterRes(null,null,null);
+            return new RecommendRes(List.of());
 
         return mappingType(aiRes, langCode);
     }
 
-    private ProductFilterRes mappingType(AiRecommendRes aiRes, String langCode) {
+    private RecommendRes mappingType(AiRecommendRes aiRes, String langCode) {
 
-        List<ProductFilterRes.CardProductRes> cardRes = new ArrayList<>();
-        List<ProductFilterRes.DepositProductRes> depositRes = new ArrayList<>();
-        List<ProductFilterRes.SavingProductRes> savingRes = new ArrayList<>();
+        List<RecommendRes.ResultItem> results = new ArrayList<>();
 
         for(AiRecommendRes.AiRecItem item : aiRes.results()){
 
@@ -82,29 +81,37 @@ public class RecommendServiceImpl implements RecommendService{
                 case "CARD" -> {
                     Card card = cardRepo.findById(id)
                             .orElseThrow(NotFoundCardException::new);
-                    if (card != null) {
-                        cardRes.add(ProductFilterRes.CardProductRes.fromCard(card, langCode, translator));
-                    }
+                    results.add(RecommendRes.CardItem.fromCard(
+                            card,
+                            langCode,
+                            translator
+                    ));
                 }
                 case "DEPOSIT" -> {
                     Deposit dep = depositRepo.findById(id)
                             .orElseThrow(NotFoundDepositException::new);
-                    if (dep != null) {
-                        depositRes.add(ProductFilterRes.DepositProductRes.fromDeposit(dep, langCode, translator));
-                    }
+
+                    results.add(RecommendRes.DepositItem.fromDeposit(
+                            dep,
+                            langCode,
+                            translator
+                    ));
                 }
                 case "SAVING" -> {
                     InstallmentSaving sav = savingRepo.findById(id)
                             .orElseThrow(NotFoundSavingException::new);
-                    if (sav != null) {
-                        savingRes.add(ProductFilterRes.SavingProductRes.fromSaving(sav, langCode, translator));
-                    }
+
+                    results.add(RecommendRes.SavingItem.fromSaving(
+                            sav,
+                            langCode,
+                            translator
+                    ));
                 }
             }
 
         }
 
-        return new ProductFilterRes(cardRes, depositRes, savingRes);
+        return new RecommendRes(results);
     }
 
     //멤버 검증

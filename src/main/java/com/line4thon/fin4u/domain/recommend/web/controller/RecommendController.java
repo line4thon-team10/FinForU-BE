@@ -2,6 +2,7 @@ package com.line4thon.fin4u.domain.recommend.web.controller;
 
 import com.line4thon.fin4u.domain.product.web.dto.ProductFilterRes;
 import com.line4thon.fin4u.domain.recommend.service.RecommendService;
+import com.line4thon.fin4u.domain.recommend.web.dto.RecommendRes;
 import com.line4thon.fin4u.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class RecommendController {
     ){
         String langCode = locale.getLanguage();
 
-        ProductFilterRes res = recommendservice.recommend(principal, langCode);
+        RecommendRes res = recommendservice.recommend(principal, langCode);
 
         return ResponseEntity.status(
                 HttpStatus.OK).body(SuccessResponse.ok(res));
