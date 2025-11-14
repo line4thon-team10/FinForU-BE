@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class KakaoMapService {
 
     @Qualifier("kakao")
