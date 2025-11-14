@@ -132,12 +132,12 @@ public class RecommendServiceImpl implements RecommendService{
 
         //사용자 선호 금융 상품 enum -> string으로 가져오기
         List<String> types = prefer.getPreferProductTypes().stream()
-                .map(Enum::name)
+                .map(type -> type.getType().name())
                 .toList();
 
         //사용자 예적금 기간 enum -> string으로 가져오기
         List<String> periods = prefer.getSavingGoalPeriods().stream()
-                .map(e -> e.name().toLowerCase())
+                .map(term -> term.getPeriod().name().toLowerCase())
                 .toList();
 
         return new AiRecommendReq(
