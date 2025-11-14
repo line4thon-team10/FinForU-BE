@@ -42,7 +42,8 @@ public record ProductDetailRes (
             String description,
             int domesticAnnualFee,
             int internationalAnnualFee,
-            List<CardBenefitDetail> benefits
+            List<CardBenefitDetail> benefits,
+            String website
 
     ){
         public static CardDetailRes fromCard(Card card, String langCode, BankNameTranslator translator) {
@@ -62,7 +63,8 @@ public record ProductDetailRes (
                     card.getDescriptionByLang(langCode),
                     card.getDomesticAnnualFee(),
                     card.getInternationalAnnualFee(),
-                    benefits
+                    benefits,
+                    card.getOfficialWebsite()
             );
         }
     }
@@ -77,7 +79,8 @@ public record ProductDetailRes (
             Double maxRate,
             Integer termMonths,
             Boolean isFlexible,
-            Integer minDepositAmount
+            Integer minDepositAmount,
+            String website
     ){
         public static DepositDetailRes fromDeposit(Deposit deposit, String langCode, BankNameTranslator translator) {
 
@@ -92,7 +95,8 @@ public record ProductDetailRes (
                     deposit.getMaxInterestRate(),
                     deposit.getDepositTerm(),
                     deposit.getIsFlexible(),
-                    deposit.getMinDepositAmount()
+                    deposit.getMinDepositAmount(),
+                    deposit.getOfficialWebsite()
             );
         }
     }
@@ -107,7 +111,8 @@ public record ProductDetailRes (
             Double maxRate,
             Integer termMonths,
             Boolean isFlexible,
-            Integer maxMonthly
+            Integer maxMonthly,
+            String website
     ){
         public static SavingDetailRes fromSaving(InstallmentSaving saving, String langCode, BankNameTranslator translator) {
 
@@ -122,7 +127,8 @@ public record ProductDetailRes (
                     saving.getMaxInterestRate(),
                     saving.getSavingTerm(),
                     saving.getIsFlexible(),
-                    saving.getMaxMonthly()
+                    saving.getMaxMonthly(),
+                    saving.getOfficialWebsite()
             );
         }
     }
